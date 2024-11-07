@@ -29,6 +29,9 @@ A copy of the toolkit that does not belong to a separate project. This version o
 ### The toolkit `clones`
 The copies of the toolkit that are under watch. These, while under watch by `wctk`, belong to separate projects.
 
+### The clone `identification`
+The identification of a clone is a way of describing particularly which clone you are talking about by having the toolkit name, followed by the slash, followed by the clone identifier. `[TK_NAME]/[CL_NAME]`
+
 ### The `version`
 A unique number assigned to a specific copy of a toolkit to represent its cumulative changes. 
 
@@ -57,38 +60,43 @@ As an aside, there are also some 'nice-to-have' use cases:
 ## The Interface
 
 woodchipper-toolset should have the following API routes:
+- `wctk`
+- `wctk [target]`
+- `wctk add [target] [path]`
+- `wctk push [-f] [target]`
+- `wctk grab [-f] [target]`
 
 - `wctk`:
-Just running the program should list all of the toolkits that are being watched and their current version number.
+Just running the program with no arguments will assume the mode is 'show'. With no target, the show mode will liast all of the toolkits that are being watched and their current version number.
 
 - `wctk [TK_NAME]`:
-Only supplying a toolkit name should display the information regarding only that toolkit: which clones are being watched, which version each of the clones currently has, and whether local changes exist. If there is no toolkit that matches the name, fallback to displaying all of the toolkits.
+Only supplying a toolkit name should assume the show mode and display the information regarding only that toolkit: which clones are being watched, which version each of the clones currently has, and whether local changes exist. If there is no toolkit that matches the name, fallback to displaying all of the toolkits.
 
-- `wctk [TK_NAME] [CL_NAME]`:
+- `wctk [TK_NAME]/[CL_NAME]`:
 Supplying the toolkit name and the name of a clone should display the information regarding that clone. If the clone referred to does not exist, just list all of the clones known and their current statuses. If the toolkit does not exist, list all of the toolkits.
 
-- `wctk -a [TK_NAME] [TK_PATH]`:
-The `-a` flag should allow for additions to the system. In this case, we should start watching the toolkit at the path and refer to it using the supplied name. If the path refers to a directory, warn the user that directories cannot be tracked and cancel out.
+- `wctk add [TK_NAME] [TK_PATH]`:
+The add mode should allow for additions to the system. In this case, we should start watching the toolkit at the path and refer to it using the supplied name. If the path refers to a directory, warn the user that directories cannot be tracked and cancel out. Note that the restrictions on the names of toolkits and clones are a length of 32 characters that cannot be \, /, |, ~, ", ', `
 
-- `wctk -a [TK_NAME] [CL_NAME] [CL_PATH] [opt:WRITE_CLONE]`:
-This route will add a clone to the given toolkit with the given name and path. `WRITE_CLONE` is an optional boolean argument that would overwrite or create the toolkit at the given path. If the clone path is a directory, warn the user and cancel out. If the toolkit name does not match a tracked toolkit, warn the user and cancel out.
+- `wctk add [TK_NAME]/[CL_NAME] [opt:CL_PATH]`:
+This route will add a clone to the given toolkit with the given name and path. The clone path defaults to the working directory. If the clone path is a directory, look for a file in the directory whose name matches the toolkit file name, and set the clones path to that specific file. If the file pointed to by clone path at this point, copy it from the archive. If the toolkit name does not match a tracked toolkit, warn the user and cancel out.
 
-- `wctk -p [TK_NAME]`:
+- `wctk push [TK_NAME]`:
 The `-p`, or 'push' flag, means to copy the core to each of the clones that need it. Pushing a toolkit will overwrite any clones which have an older version of the toolkit with the core. If there are local changes, warn the user and skip that clone. If the given toolkit does not exist, warn the user and cancel out.
 
-- `wctk -p -f [TK_NAME]`:
+- `wctk push -f [TK_NAME]`:
 The `-f`, or 'force', flag means to ignore whether the clones have any local changes and overwrite them anyway. Force pushing a toolkit will copy the toolkit even if there are local changes.
 
-- `wctk -p [TK_NAME] [CL_NAME]`:
+- `wctk push [TK_NAME]/[CL_NAME]`:
 Pushing the clone of a toolkit will copy the toolkit to that clone unless there are local changes. If the clone does not exist, warn and fail. Do similar if the toolkit cannot be resolved.
 
-- `wctk -p -f [TK_NAME] [CL_NAME]`:
+- `wctk push -f [TK_NAME]/[CL_NAME]`:
 Force push the toolkit to the clone, overwriting any local changes with the current version of the core toolkit.
 
-- `wctk -g [TK_NAME] [CL_NAME]`:
-The 'grab' flag, `-g`, does the opposite of pushing. If you 'grab' a clone, you are copying the version of the toolkit from that clone up to the core, making the copy of the kit in that clone the new core version. A grab will only be successful if the clone's version is greater than the core.
+- `wctk grab [TK_NAME]/[CL_NAME]`:
+The 'grab' mode does the opposite of pushing. If you 'grab' a clone, you are copying the version of the toolkit from that clone up to the core, making the copy of the kit in that clone the new core version. A grab will only be successful if the clone's version is greater than the core.
 
-- `wctk -g -f [TK_NAME] [CL_NAME]`:
+- `wctk grab -f [TK_NAME]/[CL_NAME]`:
 When we grab with the `force` tag, we copy the clone to the core, regardless of the state of the core toolkit. 
 
 ## Structure
@@ -131,9 +139,19 @@ Clones will be initialized by the toolkit from the archive. The data that needs 
 
 If the version number from update is newer than the archive, we simply update the `WoodchipperToolkitClone` version number and the current timestamp. 
 
-If both the version number and the timestamp match the core toolkit, than update the `state`to `up_to_date`. If it is higher or the timestamp is newer than the timestamp for the core toolkit, update `state` to `has_local_changes`. 
+If both the version number and the timestamp match the core toolkit, than update the `state` to `up_to_date`. If it is higher or the timestamp is newer than the timestamp for the core toolkit, update `state` to `has_local_changes`. 
 
 For serialization, we convert the `WoodchipperToolkitClone` to a string: '[NAME]~[PATH]~[VERSION]~[TIMESTAMP]'
+
+#### Records
+
+When considering the last_modifed_date and version, internally referred to as a record, we track three sets for each clone and each toolkit: the record listed in the archive, the current record of the file, as well as the record to be written to the archive when execution completes. 
+
+For each toolkit, if the core file's current_record is a different version than the archive_record, then we can just immediately replace the archive_record with the current_record. If we were saving backups, than anytime the core version changes, we would save it to a backup. If the current_records last_modified_date, or lmd, is different from the archive_record, we have local changes. It would make sense to assume that we want the backup copy of a version to be the oldest lmd of that version, and that any future changes to that same version are really just changes that will become the next version. 
+
+For each clone, if the current version is different, then we can immediately replace the archive_record with the current_record. If the lmd is different it has local_changes. 
+
+Thus, for both, changes in version should be notated immediately, and changes in lmd signal has_local_changes
             
 ## Operation
 
@@ -152,6 +170,7 @@ When looking at individual toolkits, we start with a header describing the toolk
 #### Specific Clone
 If we list a specific clone, than we should have 
 '[NAME]: [VERSION] ([STATE])\n[PATH]\n'. 
+As of version 0.0.1.000, we will also display a diff between the core and clone.
 
 ### Addition Functionality
 Some of the routes are designed for adding toolkits or clones. Note that when working with paths pased in by the user, we should assume they need to be resolved by Pathlib. When we save them to the Archive, they should be saved as a full path. 
@@ -160,7 +179,7 @@ Some of the routes are designed for adding toolkits or clones. Note that when wo
 When adding a toolkit, we create a new `WoodchipperToolkit` with the name and path given by the user, then immediately call the `update_toolkit()` method, and add it to the archive. The output should simply read 'Added new toolkit [NAME]: [VERSION].\n'. If the path could not be resolved to a single file, the output would read, '[NAME] could not be resolved to a toolkit.\n'. If the version tag cannot be found within the file, it will be logged as '-1'.
 
 #### Adding a Clone
-If the toolkit name resolves, then we allow the `WoodchipperToolkit` to instantiate a new clone using `add_clone()` method, passing in the name and path. The toolkit should then create a stub clone with the name and path. If the file does not exist or the `WRITE_CLONE` flag is `True`, we should copy down the core toolkit to the path. Then, we call 'update_clone()' method. When done and the archive has been saved, let the user know: 'Added [TOOLKIT_NAME] clone [NAME]: [VERSION] at [PATH].\n' If the toolkit could not be resolved, print 'Could not resolve toolkit [NAME].\n', then do the full toolkit list as if the user had just typed `wctk`.
+If the toolkit name resolves, then we allow the `WoodchipperToolkit` to instantiate a new clone using `add_clone()` method, passing in the name and path. The toolkit should then create a stub clone with the name and path. If the file does not exist, we should copy down the core toolkit to the path. Then, we call 'update_clone()' method. When done and the archive has been saved, let the user know: 'Added [TOOLKIT_NAME] clone [NAME]: [VERSION] at [PATH].\n' If the toolkit could not be resolved, print 'Could not resolve toolkit [NAME].\n', then do the full toolkit list as if the user had just typed `wctk`.
 
 ### Copying Functionality
 The copying functionality is where this application becomes actually useful. There are currently two types of copying supported by the application: *Pushing* and *Grabbing*. *Pushing* refers to copying from the core down to the clones, whereas *grabbing* pulls from the clones and replaces the core. 
@@ -174,5 +193,42 @@ When we push a toolkit, we are essentially pushing every clone monitored for tha
 #### Grabbing a Clone
 When we grab a clone, our goal is to copy a new version of the toolkit to replace the core. If the toolkit or clone could not be resolved, warn the user as we have described for previous functionality. If the clone's version is higher than the core or the `force` tag was included, we should copy the file from the clone path to the core toolkit path. Then, print 'Grabbed [CLONE_NAME].\nCore now at version [VERSION].\n'.
 
-## Version 0.0.0.1
+#### Grabbing a Toolkit
+When we use the grab on a toolkit, we save any local changes as a new version.
+
+#### Configuration
+There are a couple of app-wide variables that we may need to adjust. This includes `archive-path`, the destination of the archive where we keep copies of the toolkits, and `debug`, a boolean representing whether or not we should print debug statements.
+
+## To-Do
+- Piece out wcparser and wctk_printer into toolkits
+- 
+
+## Versions
+### 0.0.1.000
+- Feature complete, but grab and push need more testing.
+- Added:
+  - wctk.py - The core command-line script
+  - constants.py - Constants for the wctk scripts
+  - wctk_cli.py - The command line interface controller
+  - wctk_request.py - The cli parser for this script
+  - wcparser.py - WoodchipperParser, a simple ArgParse replacement
+  - test_parser.py - Tests for correct command-line interpretation
+  - wctk_printer.py - A simple, wcprofile-aware printing module.
+  - wctk_controller.py - The controller between the cli and the data models
+  - wctk_handler.py - The event handlers created by the controller to work on the models
+  - wctk_archive.py - A collection of toolkits
+  - wctk_toolkit.py - The toolkit model
+  - wctk_clone.py - The clone model
+  - wctk_tracker.py - A base model for tracking a name, a path, and a record
+  - wctk_record.py - A model of the version and the last modified date
+  - wctk_diff.py - Compiles a diff between two files.
+- Functionality Added:
+  - Command line parsing, including wcprofile configuration.
+  - 'Show' functionality
+    - Show Clone now also prints out diff of core -> clone
+  - 'Add' functionality
+  - 'Push' functionality
+  - 'Grab' functionality
+    - Grab Toolkit now increases the version of the toolkit appropriately. 
+### 0.0.0.1
 - Added wcutil and wcconstants
