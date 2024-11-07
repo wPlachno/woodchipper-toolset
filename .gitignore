@@ -163,3 +163,5 @@ cython_debug/
 .wcn*
 .idea
 __pycache__
+wcfe.py
+wctk_parser.py
