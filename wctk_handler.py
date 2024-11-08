@@ -146,8 +146,11 @@ class WoodchipperHandlerAdd(WoodchipperHandler):
             target_path = self.request.path
             if pathlib.Path(self.request.path).is_dir():
                 target_path = str(pathlib.Path(self.request.path) / pathlib.Path(tk.path).name)
-                shutil.copy2(tk.path, target_path)
-                self.results.existed = False
+                if pathlib.Path(target_path).exists():
+                    self.results.error = ERROR.ADD.CLONE.ALREADY_EXISTS.format(target_path)
+                else:
+                    shutil.copy2(tk.path, target_path)
+                    self.results.existed = False
             tk.add_clone(self.target_clone, target_path)
             self.archive.save()
             self.results.toolkit = self._record_toolkit(tk)

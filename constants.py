@@ -167,6 +167,7 @@ class ERROR:
         class CLONE:
             INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'" # (target_toolkit)
             ALREADY_REGISTERED = f"{clr("Clone", COLOR.CLONE)} '{S.OP0}' {clr("already exists", COLOR.ERROR)} at {clr(S.OP1, COLOR.PATH)}." # (clone.name, clone.path)
+            ALREADY_EXISTS = f"A file already exists at {clr(S.OP0, COLOR.PATH)}." # (Target_path)
     class SHOW:
         class TOOLKIT:
             INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'" # (target_toolkit)
