@@ -116,6 +116,7 @@ class COLOR:
     PATH = S.COLOR_SUB
     SUCCESS = S.COLOR_GREEN
     ERROR = S.COLOR_RED
+    WARNING = S.COLOR_DARK_YELLOW
     RESET = S.COLOR_DEFAULT
     class STATE_VAL:
         UNKNOWN = '\x1b[1;30;41m'           # Black (Red BG)
@@ -228,6 +229,30 @@ class OUT:
                 None, clr("SUCCESS", COLOR.SUCCESS),
                 f"{clr("REGISTERED", COLOR.SUCCESS)}: {TAG.CLONE.IDENT}",
                 f"{clr("REGISTERED", COLOR.SUCCESS)}: {TAG.CLONE.IDENT} /n{clr(S.OP2, COLOR.PATH)} copied from {clr(S.OP3, COLOR.PATH)}."] # (TK.name, Clone.name, Clone.path)
+    class PUSH:
+        class TOOLKIT:
+            HEADER = [ # tk.name, tk.path
+                None, clr("SUCCESS", COLOR.SUCCESS),
+                f"{clr("PUSHED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)}",
+                f"{clr("PUSHED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)} from {clr(S.OP1, COLOR.PATH)}."]
+            class ITEM:
+                SUCCESS = [ # (clone_name, clone_path)
+                    None, None,
+                    f"{S.DH}{clr(S.OP0, COLOR.CLONE)}: {clr("REPLACED",COLOR.SUCCESS)}", # (clone_name)
+                    f"{S.DH}{clr(S.OP0, COLOR.CLONE)}: {clr("REPLACED",COLOR.SUCCESS)} at {clr(S.OP1, COLOR.PATH)}"] # (clone_name, clone_path)
+                FAILED = [ # clone_name, clone_path, clone_error
+                    None, None,
+                    f"{S.DH}{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)}\n{S.OP2}", # (clone_name)
+                    f"{S.DH}{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)} at {clr(S.OP1, COLOR.PATH)}\n{S.OP2}"] # (clone_name, clone_path, clone_error)
+        class CLONE:
+            SUCCESS = [ # (clone_name, clone_path)
+                None, f"{clr("SUCCESS",COLOR.SUCCESS)}",
+                f"{clr(S.OP0, COLOR.CLONE)}: {clr("SUCCESS",COLOR.SUCCESS)}", # (clone_name)
+                f"{clr(S.OP0, COLOR.CLONE)}: {clr("SUCCESS",COLOR.SUCCESS)} at {clr(S.OP1, COLOR.PATH)}"] # (clone_name, clone_path)
+            FAILED = [ # (clone_name, clone_path, clone_error)
+                None, f"{clr("SKIPPED",COLOR.WARNING)}",
+                f"{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)}\n{S.OP2}", # (clone_name)
+                f"{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)} at {clr(S.OP1, COLOR.PATH)}\n{S.OP2}"] # (clone_name, clone_path, clone_error)
 
 class DEPRECATED_OUT: # Command-line output, .format() required for SOME
     class LIST:
@@ -246,7 +271,10 @@ OUT_TAG_STATE_ITEM = OUT_TAG_ITEM+" ("+S.COLOR_SUPER+S.OP2+S.COLOR_DEFAULT+")"
 OUT_HEADER_ITEM = OUT_TAG_STATE_ITEM+S.NL+S.OP3+S.NL #   '[NAME]: [VERSION] ([STATE])\n[PATH]\n'
 OUT_LIST_ITEM = "- "+OUT_TAG_STATE_ITEM+S.NL      # '- [NAME]: [VERSION] ([STATE])\n'
 
-
+class COMPARE:
+    LESSER_THAN = -1
+    EQUAL_TO = 0
+    GREATER_THAN = 1
 
 OUT_ADDED_TOOLKIT = "Added new toolkit "+TAG.TOOLKIT.NAME+S.EL
 OUT_ADDED_CLONE = "Added new clone "+TAG.CLONE.IDENT+" at path "+COLOR.PATH+S.OP2+COLOR.RESET+S.EL

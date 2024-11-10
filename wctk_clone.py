@@ -17,10 +17,11 @@ class WoodchipperToolkitClone(WCTracker):
         new_state = C.STATE.UNKNOWN
         if self.current:
             new_state = C.STATE.BEHIND_CORE
-            if self.current.is_higher_version_than(core_record):
+            version_compare = self.current.compare_versions_with(core_record)
+            if version_compare == C.COMPARE.GREATER_THAN:
                 new_state = C.STATE.AFTER_CORE
-            elif self.current.has_same_version_as(core_record):
+            elif version_compare == C.COMPARE.EQUAL_TO:
                 new_state = C.STATE.UP_TO_DATE
-            elif self.has_local_changes():
+            if self.has_local_changes():
                 new_state = C.STATE.HAS_LOCAL_CHANGES
         self.state = new_state
