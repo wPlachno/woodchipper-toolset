@@ -35,7 +35,7 @@ class WoodchipperToolkit(WCTracker):
         if self.current and self.archive:
             if self.current.is_higher_version_than(self.archive):
                 self.archive = self.current
-            elif self.current.has_newer_modifications_than(self.archive):
+            elif self.has_local_changes():
                 self.state = C.STATE.HAS_LOCAL_CHANGES
         for clone in self.clones:
             clone.update()

@@ -21,13 +21,13 @@ class WCRecord:
         return self.compare_version_strings(self.version, other_record.version)
 
     def has_newer_modifications_than(self, other_record):
-        return self.last_modified > other_record.last_modified
+        return int(self.last_modified) > int(other_record.last_modified)
 
     def is_newer_than(self, other_record):
         return self.is_higher_version_than(other_record) or self.has_newer_modifications_than(other_record)
 
     def is_equal_to(self,other_record):
-        return self.version == other_record.version and self.last_modified == other_record.last_modified
+        return self.version == other_record.version and int(self.last_modified) == int(other_record.last_modified)
 
     def has_same_version_as(self, other_record):
         return self.version == other_record.version

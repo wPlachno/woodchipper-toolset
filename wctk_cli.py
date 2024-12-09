@@ -84,16 +84,32 @@ class WoodchipperToolkitCommandLineInterface:
         self.printer.v_frame(frame_list, tk.name, cl.name, cl.path, tk.path)
 
     def _print_push_toolkit(self, results):
-        pass
+        tk = results.data.toolkit
+        clones = results.data.clones
+        header_frame = OUT.PUSH.TOOLKIT.HEADER
+        self.printer.v_frame(header_frame, tk.name, tk.path)
+        for clone in clones:
+            clone_frame = OUT.PUSH.TOOLKIT.ITEM.SUCCESS if clone.replaced else OUT.PUSH.TOOLKIT.ITEM.FAILED
+            self.printer.v_frame(clone_frame, clone.name, clone.path, clone.error)
+
 
     def _print_push_clone(self, results):
-        pass
+        tk = results.data.toolkit
+        cl = results.data.clone
+        clone_frame = OUT.PUSH.TOOLKIT.ITEM.SUCCESS if cl.replaced else OUT.PUSH.TOOLKIT.ITEM.FAILED
+        self.printer.v_frame(clone_frame, cl.name, cl.path, cl.error)
+
 
     def _print_grab_toolkit(self, results):
-        pass
+        tk = results.data.toolkit
+        frame = OUT.GRAB.TOOLKIT
+        self.printer.v_frame(frame, tk.name, tk.version, tk.old_version)
 
     def _print_grab_clone(self, results):
-        pass
+        tk = results.data.toolkit
+        cl = results.data.clone
+        frame = OUT.GRAB.CLONE
+        self.printer.v_frame(frame, tk.name, cl.name, cl.path, cl.version)
 
     def _print_show_all(self, results):
         toolkits = results.data.toolkits

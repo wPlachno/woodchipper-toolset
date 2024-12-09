@@ -1,5 +1,5 @@
 from wcutil import WoodchipperNamespace as WCNamespace
-from constants import HANDLER, KEY, ERROR, STATE
+from constants import HANDLER, KEY, ERROR, STATE, COLOR, clr_state
 import wctk_diff as WCDiff
 import pathlib, shutil
 
@@ -164,11 +164,14 @@ class WoodchipperHandlerPush(WoodchipperHandler):
         WoodchipperHandler._handle_toolkit(self)
         toolkit_resolved, toolkit = self._claim_toolkit()
         if toolkit_resolved:
-            clones = []
-            for clone in toolkit.clones:
-                clones.append(self._push_clone(toolkit, clone))
-            self.results.add(KEY.TOOLKIT.CLONES, clones)
-            self.results.success = True
+            if len(toolkit.clones) == 0:
+                self.results.error = ERROR.PUSH.TOOLKIT.NO_CLONES.format(toolkit.name)
+            else:
+                clones = []
+                for clone in toolkit.clones:
+                    clones.append(self._push_clone(toolkit, clone))
+                self.results.add(KEY.TOOLKIT.CLONES, clones)
+                self.results.success = True
         return self.results
 
     def _handle_clone(self):
@@ -188,7 +191,7 @@ class WoodchipperHandlerPush(WoodchipperHandler):
         if toolkit.state != STATE.UP_TO_DATE and not self.request.force:
             error = ERROR.PUSH.CLONE.TOOLKIT_NOT_PUSHABLE.format(toolkit.name)
         elif clone.state != STATE.BEHIND_CORE and not self.request.force:
-            error = ERROR.PUSH.CLONE.UP_TO_DATE(toolkit.name, clone.name)
+            error = ERROR.PUSH.CLONE.UP_TO_DATE.format(toolkit.name, clone.name, clr_state(clone.state))
         else:
             shutil.copy2(toolkit.path, clone.path)
             clone.update()
@@ -204,11 +207,14 @@ class WoodchipperHandlerGrab(WoodchipperHandler):
         WoodchipperHandler._handle_toolkit(self)
         toolkit_resolved, toolkit = self._claim_toolkit()
         if toolkit_resolved:
-            old_version = toolkit.archive.version
-            new_version = self._increment_version(old_version)
-            toolkit.set_version(new_version)
-            self.results.toolkit = self._record_toolkit(toolkit, [(KEY.TOOLKIT.OLD_VERSION, old_version)])
-            self.results.success = True
+            if not self.request.force and toolkit.state == STATE.UP_TO_DATE:
+                self.results.error = ERROR.GRAB.TOOLKIT.NO_CHANGES.format(toolkit.name)
+            else:
+                old_version = toolkit.archive.version
+                new_version = self._increment_version(old_version)
+                toolkit.set_version(new_version)
+                self.results.toolkit = self._record_toolkit(toolkit, [(KEY.TOOLKIT.OLD_VERSION, old_version)])
+                self.results.success = True
         return self.results
 
     @staticmethod
@@ -231,10 +237,15 @@ class WoodchipperHandlerGrab(WoodchipperHandler):
         WoodchipperHandler._handle_clone(self)
         clone_resolved, clone, toolkit = self._claim_clone()
         if clone_resolved:
-            self._unimplemented()
-            # check for force or toolkit is up_to_date : ERROR.GRAB.CLONE.TOOLKIT_CHANGES
-            # check for force or clone is after_core : ERROR.GRAB.CLONE.NO_NEW_VERSION
-
+            if not toolkit.state == STATE.UP_TO_DATE and not self.request.force:
+                # check for force or toolkit is up_to_date : ERROR.GRAB.CLONE.TOOLKIT_CHANGES
+                self.results.error = ERROR.GRAB.CLONE.TOOLKIT_HAS_CHANGES.format(toolkit.name)
+            elif not clone.state == STATE.AFTER_CORE and not self.request.force:
+                # check for force or clone is after_core : ERROR.GRAB.CLONE.NO_NEW_VERSION
+                self.results.error = ERROR.GRAB.CLONE.NO_NEW_VERSION.format(toolkit.name, clone.name)
+            else:
+                shutil.copy2(clone.path, toolkit.path)
+                self.results.success = True
         return self.results
 
 class WoodchipperHandlerShow(WoodchipperHandler):

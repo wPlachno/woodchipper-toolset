@@ -159,27 +159,35 @@ class TAG: # .format() required
 
 class ERROR:
     class COULD_NOT_RESOLVE:
-        TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'" # (target_toolkit)
-        CLONE = f"There exists no {clr("Clone", COLOR.CLONE)} named '{S.OP0}' in toolkit {clr(S.OP1, COLOR.TOOLKIT)}." # (target_clone, target_toolkit)
+        TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'." # (target_toolkit)
+        CLONE = f"There exists no clone '{clr(S.OP0, COLOR.CLONE)}' in toolkit {clr(S.OP1, COLOR.TOOLKIT)}." # (target_clone, target_toolkit)
     class ADD:
         class TOOLKIT:
             ALREADY_REGISTERED = f"{clr("Toolkit", COLOR.TOOLKIT)} '{S.OP0}' {clr("already exists", COLOR.ERROR)} at {clr(S.OP1, COLOR.PATH)}." # (toolkit.name, toolkit.path)
             IS_DIRECTORY = f"{clr("Toolkit", COLOR.TOOLKIT)} '{S.OP0}' cannot be registered because {clr(S.OP1, COLOR.PATH)} leads to a {clr("directory", COLOR.ERROR)}. Toolkits must consist of a specific file." # (toolkit.name, toolkit.path)
         class CLONE:
-            INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'" # (target_toolkit)
+            INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'." # (target_toolkit)
             ALREADY_REGISTERED = f"{clr("Clone", COLOR.CLONE)} '{S.OP0}' {clr("already exists", COLOR.ERROR)} at {clr(S.OP1, COLOR.PATH)}." # (clone.name, clone.path)
             ALREADY_EXISTS = f"A file already exists at {clr(S.OP0, COLOR.PATH)}." # (Target_path)
     class SHOW:
         class TOOLKIT:
-            INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'" # (target_toolkit)
+            INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'." # (target_toolkit)
         class CLONE:
-            INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'" # (target_toolkit)
-            INVALID_CLONE = f"There exists no {clr("Clone", COLOR.CLONE)} named '{S.OP0}'" # (target_clone)
+            INVALID_TOOLKIT = f"There exists no {clr("Toolkit", COLOR.TOOLKIT)} named '{S.OP0}'." # (target_toolkit)
+            INVALID_CLONE = f"There exists no {clr("Clone", COLOR.CLONE)} named '{S.OP0}'." # (target_clone)
             UNSUCCESSFUL_DIFF = f"An error occurred during the diffing process."
     class PUSH:
+        class TOOLKIT:
+            NO_CLONES = f"The toolkit {clr(S.OP0, COLOR.TOOLKIT)} has no clones registered and cannot be successfully pushed."
         class CLONE:
             TOOLKIT_NOT_PUSHABLE = f"The toolkit {clr(S.OP0, COLOR.TOOLKIT)} is not {clr_state(STATE.UP_TO_DATE)} and cannot be pushed." # (toolkit_name)
-            UP_TO_DATE = f"{TAG.CLONE.IDENT} is already {clr_state(STATE.UP_TO_DATE)} and was skipped."
+            UP_TO_DATE = f"{TAG.CLONE.IDENT} is {S.OP2} and was skipped."
+    class GRAB:
+        class TOOLKIT:
+            NO_CHANGES = f"The toolkit {clr(S.OP0, COLOR.TOOLKIT)} is already {clr_state(STATE.UP_TO_DATE)}."
+        class CLONE:
+            TOOLKIT_HAS_CHANGES = f"The toolkit {clr(S.OP0, COLOR.TOOLKIT)} is not {clr_state(STATE.UP_TO_DATE)} and cannot be replaced safely." # (toolkit_name)
+            NO_NEW_VERSION = f"{TAG.CLONE.IDENT} is not {clr_state(STATE.AFTER_CORE)}." # (tk.name, clone.name)
 
 class OUT:
     ERROR = clr("ERROR: ", COLOR.ERROR)+S.OP0+S.NL
@@ -233,8 +241,8 @@ class OUT:
         class TOOLKIT:
             HEADER = [ # tk.name, tk.path
                 None, clr("SUCCESS", COLOR.SUCCESS),
-                f"{clr("PUSHED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)}",
-                f"{clr("PUSHED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)} from {clr(S.OP1, COLOR.PATH)}."]
+                f"{clr("PROPAGATED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)}",
+                f"{clr("PROPAGATED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)} from {clr(S.OP1, COLOR.PATH)}."]
             class ITEM:
                 SUCCESS = [ # (clone_name, clone_path)
                     None, None,
@@ -244,6 +252,7 @@ class OUT:
                     None, None,
                     f"{S.DH}{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)}\n{S.OP2}", # (clone_name)
                     f"{S.DH}{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)} at {clr(S.OP1, COLOR.PATH)}\n{S.OP2}"] # (clone_name, clone_path, clone_error)
+
         class CLONE:
             SUCCESS = [ # (clone_name, clone_path)
                 None, f"{clr("SUCCESS",COLOR.SUCCESS)}",
@@ -253,6 +262,15 @@ class OUT:
                 None, f"{clr("SKIPPED",COLOR.WARNING)}",
                 f"{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)}\n{S.OP2}", # (clone_name)
                 f"{clr(S.OP0, COLOR.CLONE)}: {clr("SKIPPED",COLOR.WARNING)} at {clr(S.OP1, COLOR.PATH)}\n{S.OP2}"] # (clone_name, clone_path, clone_error)
+    class GRAB:
+        TOOLKIT = [ # (toolkit_name, new_version, old_version)
+            None, clr("SUCCESS", COLOR.SUCCESS),
+            f"{clr("UPDATED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)} to {clr(S.OP1, COLOR.VERSION)}",
+            f"{clr("UPDATED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)} to {clr(S.OP1, COLOR.VERSION)} from {clr(S.OP2, COLOR.VERSION)}"]
+        CLONE = [
+            None, clr("SUCCESS", COLOR.SUCCESS),
+            f"{clr("UPDATED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)} from {TAG.CLONE.IDENT}",
+            f"{clr("UPDATED", COLOR.SUCCESS)}: {clr(S.OP0, COLOR.TOOLKIT)} from {clr(S.OP2, COLOR.PATH)} ({clr(S.OP3, COLOR.VERSION)})."] # (TK.name, Clone.name, Clone.path, clone.version)
 
 class DEPRECATED_OUT: # Command-line output, .format() required for SOME
     class LIST:
