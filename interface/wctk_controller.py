@@ -1,9 +1,8 @@
-from types import SimpleNamespace
+from core.wctk_archive import WoodchipperArchive as WCArchive
+from utilities.wcutil import WoodchipperNamespace as WCNamespace
+from core import wctk_handler as WCHandlers
+from interface import constants as C
 
-from wctk_archive import WoodchipperArchive as WCArchive
-from wcutil import WoodchipperNamespace as WCNamespace
-import wctk_handler as WCHandlers
-import constants as C
 
 class WoodchipperController:
     def __init__(self):

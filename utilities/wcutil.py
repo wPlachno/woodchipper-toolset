@@ -87,7 +87,7 @@ import pathlib
 from datetime import datetime
 from types import SimpleNamespace
 
-import wcconstants as S
+import utilities.wcconstants as S
 
 """ CLASSES ------------------------------------------------------ """
 

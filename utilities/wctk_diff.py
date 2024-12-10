@@ -1,8 +1,6 @@
-import difflib
 from difflib import *
-from functools import reduce
 
-from wcutil import WoodChipperFile as WCFile
+from utilities.wcutil import WoodChipperFile as WCFile
 
 class COLOR:
 

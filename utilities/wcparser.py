@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-import wcconstants as S
+from utilities import wcconstants as S
 import sys
 
 class CLP_Argument:

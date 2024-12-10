@@ -1,9 +1,5 @@
-import datetime
-
-from wctk_record import WCRecord
-from wctk_tracker import WCTracker
-import constants as C
-from wcutil import WoodChipperFile, WoodchipperDictionaryFile
+from core.wctk_tracker import WCTracker
+from interface import constants as C
 
 
 class WoodchipperToolkitClone(WCTracker):

@@ -1,8 +1,8 @@
-import wctk_request as WCParser
-from wcutil import WoodchipperSettingsFile as WCProfile
-from wctk_printer import WoodchipperToolkitPrinter as WCPrinter
-from wcconstants import Verbosity
-from constants import MODE, HANDLER, OUT, clr_state as CLR_STATE
+import interface.wctk_request as WCParser
+from utilities.wcutil import WoodchipperSettingsFile as WCProfile
+from utilities.wctk_printer import WoodchipperToolkitPrinter as WCPrinter
+from utilities.wcconstants import Verbosity
+from interface.constants import MODE, HANDLER, OUT, clr_state as CLR_STATE
 
 
 class WoodchipperToolkitCommandLineInterface:

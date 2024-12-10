@@ -1,9 +1,10 @@
 import pathlib
 
-from wctk_tracker import WCTracker
-from wcutil import WoodChipperFile as WCFile
-from wctk_toolkit import WoodchipperToolkit as WCToolkit
-import constants as C
+from core.wctk_tracker import WCTracker
+from core.wctk_toolkit import WoodchipperToolkit as WCToolkit
+from utilities.wcutil import WoodChipperFile as WCFile
+from interface import constants as C
+
 
 class WoodchipperArchive:
     def __init__(self, archive_file_name=C.FILE_NAME.ARCHIVE):

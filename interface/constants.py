@@ -1,5 +1,5 @@
-import wcconstants as S
-from wcconstants import COLOR_DEFAULT, EMPTY
+from utilities import wcconstants as S
+from utilities.wcconstants import COLOR_DEFAULT
 
 TAG_VERSION = "Version:"
 

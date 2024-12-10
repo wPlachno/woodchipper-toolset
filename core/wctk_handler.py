@@ -1,6 +1,6 @@
-from wcutil import WoodchipperNamespace as WCNamespace
-from constants import HANDLER, KEY, ERROR, STATE, COLOR, clr_state
-import wctk_diff as WCDiff
+from utilities.wcutil import WoodchipperNamespace as WCNamespace
+from interface.constants import HANDLER, KEY, ERROR, STATE, clr_state
+from utilities import wctk_diff as WCDiff
 import pathlib, shutil
 
 

@@ -1,9 +1,9 @@
 
 import sys
 
-from constants import MODE
-from wctk_cli import WoodchipperToolkitCommandLineInterface as WCCLI
-from wctk_controller import WoodchipperController as WCController
+from interface.constants import MODE
+from interface.wctk_cli import WoodchipperToolkitCommandLineInterface as WCCLI
+from interface.wctk_controller import WoodchipperController as WCController
 
 
 

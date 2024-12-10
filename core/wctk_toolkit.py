@@ -1,10 +1,7 @@
+from core.wctk_tracker import WCTracker
+from core.wctk_clone import WoodchipperToolkitClone as WCClone
+from interface import constants as C
 
-
-from wctk_record import WCRecord
-from wctk_tracker import WCTracker
-from wctk_clone import WoodchipperToolkitClone as WCClone
-from wcutil import WoodChipperFile, WoodchipperDictionaryFile
-import constants as C
 
 class WoodchipperToolkit(WCTracker):
 

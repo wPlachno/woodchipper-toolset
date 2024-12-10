@@ -1,10 +1,8 @@
 import pytest
+from interface import wctk_request as WCParser
+from utilities.wcutil import WoodchipperSettingsFile as WCProfile
+from interface.constants import MODE
 
-import wctk_request as WCParser
-from wcutil import WoodchipperSettingsFile as WCProfile
-from wctk_printer import WoodchipperToolkitPrinter as WCPrinter
-from wcconstants import Verbosity
-from constants import MODE, TEST
 
 class Test_Parser:
     @staticmethod

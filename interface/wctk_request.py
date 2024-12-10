@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from wcparser import CLParser as WCParser
+from utilities.wcparser import CLParser as WCParser
 
 def build_parser():
     parser = WCParser("wctk",

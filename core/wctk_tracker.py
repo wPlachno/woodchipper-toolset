@@ -1,10 +1,5 @@
-import pathlib
-
-from rich.status import Status
-
-import wcutil
-from wctk_record import WCRecord
-from wcutil import WoodChipperFile
+from core.wctk_record import WCRecord
+from utilities.wcutil import WoodChipperFile
 
 
 class WCTracker:
