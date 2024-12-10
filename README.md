@@ -200,8 +200,17 @@ When we use the grab on a toolkit, we save any local changes as a new version.
 There are a couple of app-wide variables that we may need to adjust. This includes `archive-path`, the destination of the archive where we keep copies of the toolkits, and `debug`, a boolean representing whether or not we should print debug statements.
 
 ## To-Do
-- Piece out wcparser and wctk_printer into toolkits
-- 
+- Order imports
+  - sys
+  - utilities
+  - interface
+  - core
+- Separate constants into package specific constants files.
+- Separate out errors
+- Separate handler into two pieces:
+  - The interface selection 
+  - The core processing
+- Rename wctk_printer.py to just wcprinter.py
 
 ## Versions
 ### 0.0.1.000
