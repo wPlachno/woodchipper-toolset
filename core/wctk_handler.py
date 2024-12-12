@@ -18,14 +18,19 @@ class WoodchipperHandler:
         self.results = self._init_results()
 
     def handle(self):
+        handler_target = self._handle_clone
         if self.target_toolkit is None:
             self.results.handler = self.handler_function.ALL
-            return self._handle_all()
-        if self.target_clone is None:
+            handler_target = self._handle_all
+        elif self.target_clone is None:
             self.results.handler = self.handler_function.TOOLKIT
-            return self._handle_toolkit()
-        self.results.handler = self.handler_function.CLONE
-        return self._handle_clone()
+            handler_target = self._handle_toolkit
+        else:
+            self.results.handler = self.handler_function.CLONE
+            handler_target = self._handle_clone
+        handler_result = handler_target()
+        self.archive.save()
+        return handler_result
 
     def _init_results(self):
         self.results = WCNamespace("HandlerResults")

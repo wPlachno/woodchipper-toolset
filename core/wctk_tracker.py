@@ -16,6 +16,7 @@ class WCTracker:
         self.path = path
         self.delimiter = delimiter
         self.status = WCTracker.Status.SHELL
+        self.requires_write = False
         self.archive = None
         self.current = None
 
@@ -37,6 +38,11 @@ class WCTracker:
         else:
             self._set_status(WCTracker.Status.ERROR)
 
+    def _set_archive(self, archive):
+        if not archive.is_equal_to(self.archive):
+            self.archive = archive
+            self.requires_write = True
+
 
     def update(self):
         if not self.path == "None" and not self.status == WCTracker.Status.ERROR:
@@ -49,7 +55,7 @@ class WCTracker:
             current_record.version = wc_file.find_tag("version: ")
             self.current = current_record
             if (not self.archive) or self.current.is_higher_version_than(self.archive):
-                self.archive = self.current
+                self._set_archive(self.current)
             self._set_status(WCTracker.Status.UPDATE)
             return True
         else:

@@ -37,10 +37,11 @@ class WoodchipperArchive:
             tk.update()
 
     def save(self):
-        self.file.clear()
-        for current_toolkit in self.toolkits:
-            self.file.append_line(current_toolkit.write_archive())
-        self.file.write()
+        if self._requires_save():
+            self.file.clear()
+            for current_toolkit in self.toolkits:
+                self.file.append_line(current_toolkit.write_archive())
+            self.file.write()
 
     def add_toolkit(self, name, path):
         new_tk = WCToolkit()
@@ -48,4 +49,10 @@ class WoodchipperArchive:
         new_tk.path = path
         new_tk.update()
         self.toolkits.append(new_tk)
+
+    def _requires_save(self):
+        requires_save = False
+        for toolkit in self.toolkits:
+            requires_save = requires_save or toolkit.requires_save()
+        return requires_save
 

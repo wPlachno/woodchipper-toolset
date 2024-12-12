@@ -1,3 +1,5 @@
+from array import array
+
 from core.wctk_tracker import WCTracker
 from core.wctk_clone import WoodchipperToolkitClone as WCClone
 from interface import constants as C
@@ -29,11 +31,8 @@ class WoodchipperToolkit(WCTracker):
     def update(self):
         WCTracker.update(self)
         self.state = C.STATE.UP_TO_DATE
-        if self.current and self.archive:
-            if self.current.is_higher_version_than(self.archive):
-                self.archive = self.current
-            elif self.has_local_changes():
-                self.state = C.STATE.HAS_LOCAL_CHANGES
+        if self.has_local_changes():
+            self.state = C.STATE.HAS_LOCAL_CHANGES
         for clone in self.clones:
             clone.update()
             clone.compare(self.archive)
@@ -59,4 +58,10 @@ class WoodchipperToolkit(WCTracker):
         new_cl.update()
         new_cl.compare(self.archive)
         self.clones.append(new_cl)
+
+    def requires_save(self):
+        requires_save = self.requires_write
+        for clone in self.clones:
+            requires_save = requires_save or clone.requires_write
+        return requires_save
 
