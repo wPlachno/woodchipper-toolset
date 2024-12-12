@@ -39,7 +39,7 @@ class WCTracker:
             self._set_status(WCTracker.Status.ERROR)
 
     def _set_archive(self, archive):
-        if not archive.is_equal_to(self.archive):
+        if not self.archive or not archive.is_equal_to(self.archive):
             self.archive = archive
             self.requires_write = True
 
