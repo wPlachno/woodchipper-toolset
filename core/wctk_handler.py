@@ -5,9 +5,10 @@ import pathlib, shutil
 
 
 class WoodchipperHandler:
-    def __init__(self, request, archive):
+    def __init__(self, request, archive, handler_function=None):
         self.request = request
         self.archive = archive
+        self.handler_function = handler_function
         self.target_toolkit = None
         self.target_clone = None
         if self.request.target is not None:
@@ -18,9 +19,12 @@ class WoodchipperHandler:
 
     def handle(self):
         if self.target_toolkit is None:
+            self.results.handler = self.handler_function.ALL
             return self._handle_all()
         if self.target_clone is None:
+            self.results.handler = self.handler_function.TOOLKIT
             return self._handle_toolkit()
+        self.results.handler = self.handler_function.CLONE
         return self._handle_clone()
 
     def _init_results(self):
@@ -117,6 +121,8 @@ class WoodchipperHandler:
 
 
 class WoodchipperHandlerAdd(WoodchipperHandler):
+    def __init__(self, request, archive):
+        WoodchipperHandler.__init__(request, archive, HANDLER.SHOW)
     def _handle_toolkit(self):
         self.results.handler = HANDLER.ADD.TOOLKIT
         WoodchipperHandler._handle_toolkit(self)
@@ -161,6 +167,8 @@ class WoodchipperHandlerAdd(WoodchipperHandler):
         return self.results
 
 class WoodchipperHandlerPush(WoodchipperHandler):
+    def __init__(self, request, archive):
+        WoodchipperHandler.__init__(request, archive, HANDLER.SHOW)
     def _handle_toolkit(self):
         self.results.handler = HANDLER.PUSH.TOOLKIT
         WoodchipperHandler._handle_toolkit(self)
@@ -204,8 +212,9 @@ class WoodchipperHandlerPush(WoodchipperHandler):
             (KEY.CLONE.ERROR, error)])
 
 class WoodchipperHandlerGrab(WoodchipperHandler):
+    def __init__(self, request, archive):
+        WoodchipperHandler.__init__(request, archive, HANDLER.SHOW)
     def _handle_toolkit(self):
-        self.results.handler = HANDLER.GRAB.TOOLKIT
         WoodchipperHandler._handle_toolkit(self)
         toolkit_resolved, toolkit = self._claim_toolkit()
         if toolkit_resolved:
@@ -251,8 +260,9 @@ class WoodchipperHandlerGrab(WoodchipperHandler):
         return self.results
 
 class WoodchipperHandlerShow(WoodchipperHandler):
+    def __init__(self, request, archive):
+        WoodchipperHandler.__init__(request, archive, HANDLER.SHOW)
     def _handle_all(self):
-        self.results.handler = HANDLER.SHOW.ALL
         self.results.add(KEY.RESULTS.TOOLKITS, WoodchipperHandler._record_toolkits(self.archive))
         self.results.success = True
         return self.results
