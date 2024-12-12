@@ -211,6 +211,8 @@ There are a couple of app-wide variables that we may need to adjust. This includ
   - The interface selection 
   - The core processing
 - Rename wctk_printer.py to just wcprinter.py
+- Theres a bug regarding version increments and checking changes.
+- Make delete wildcard-aware. See pathlib.Path.Glob('*.py')
 
 ## Versions
 ### 0.0.1.000
