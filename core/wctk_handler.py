@@ -230,6 +230,7 @@ class WoodchipperHandlerGrab(WoodchipperHandler):
                 new_version = self._increment_version(old_version)
                 toolkit.set_version(new_version)
                 self.results.toolkit = self._record_toolkit(toolkit, [(KEY.TOOLKIT.OLD_VERSION, old_version)])
+                self.results.clones = self._record_clones(toolkit)
                 self.results.success = True
         return self.results
 
