@@ -1,7 +1,7 @@
 """
 wcutil.py
 Created by Will Plachno on 11/30/23
-Version 0.0.1.000
+Version 0.0.1.001
 
 Woodchipper Utilities
 An assortment of helpful functions and classes.
@@ -236,7 +236,22 @@ class WoodchipperNamespace(SimpleNamespace):
         out_str += "}"
         return out_str
 
+class WoodchipperDictionary:
+    def __init__(self, default_value=None):
+        self.values = dict()
+        self.default = default_value
+        self.values["default"] = self.default
 
+    def __getitem__(self, key="default"):
+        try:
+            return self.values[key]
+        except KeyError:
+            return self.default
+
+    def __setitem__(self, key, value):
+        if key.lower() == "default":
+            self.default = value
+        self.values[key] = value
 
 
 """ WoodchipperFile
