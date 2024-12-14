@@ -253,6 +253,44 @@ class WoodchipperDictionary:
             self.default = value
         self.values[key] = value
 
+    def __iter__(self):
+        class WoodchipperDictionaryIterator:
+            def __init__(self, wcdict):
+                self.dict = wcdict
+                self.keys = list(wcdict.values.keys())
+                self.length = len(self.keys)
+                self.index = -1
+                self.key = None
+                self.value = None
+                if not self.find_next():
+                    raise StopIteration
+
+            def __next__(self):
+                if not self.find_next():
+                    raise StopIteration
+                return self.value
+
+            def find_next(self):
+                self.index += 1
+                if self.index > self.length:
+                    return False
+                elif self.index == self.length:
+                    self.set("default")
+                    return True
+                else:
+                    key = self.keys[self.index]
+                    if key == "default":
+                        return self.find_next()
+                    else:
+                        self.set(key)
+                        return True
+
+            def set(self, key):
+                self.key = key
+                self.value = self.dict[self.key]
+        return WoodchipperDictionaryIterator(self)
+
+
 
 """ WoodchipperFile
 #
