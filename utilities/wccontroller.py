@@ -1,4 +1,5 @@
 from utilities.wcutil import WoodchipperNamespace as WCNamespace
+from wcresponse import WoodchipperCoreResponse as WCResponse
 
 
 class WoodchipperController:
@@ -6,18 +7,18 @@ class WoodchipperController:
         self.request = None
         self.data = None
         self.handlers = handlers
-        self.results = WCNamespace("ControllerResults")
+        self.results = WCResponse()
 
     def process_request(self, process_request):
         self.request = process_request
-        self.initialize_results()
+        self.results.build_from_request(self.request)
         # if self.request.debug:
-        handler = self.handlers[self.request.handler]
-        self.data = handler(self.request, self.results)
-        self.results.add("data", self.data)
-
-    def initialize_results(self):
-        self.results.add("mode", self.request.mode)
-        self.results.add("debug", self.request.debug)
-        self.results.add("error", None)
-        self.results.add("success", False)
+        handler_id = self.request.mode
+        if handler_id:
+            self.results.mode = handler_id
+            handler_type = self.handlers[handler_id]
+            handler = handler_type(self.request, self.results)
+            self.data = handler.handle()
+            self.results.data = self.data
+        else:
+            self.results.error = "Unable to figure out which handler should operate on the request."

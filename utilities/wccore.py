@@ -1,37 +1,43 @@
 import sys
 
 import utilities.wcconstants as C
+import utilities
 from utilities.wccli import WoodchipperCommandLineInterface as WCCLI
 from utilities.wccontroller import WoodchipperController as WCController
+from utilities.wcmodehandler import WoodchipperCoreModeHandler as WCHandler
+from utilities.wcmodeprinter import WoodchipperCoreModePrinter as WCPrinter
 from utilities.wcparser import CLParser as WCParser
 from utilities.wcutil import WoodchipperDictionary as WCDict, int_from_string, bool_from_user
 
 class WoodchipperCore:
-    def __init__(self):
-        self.handlers = WCDict(default_value=WoodchipperCore.default_handler)
-        self.printers = WCDict(default_value=WoodchipperCore.default_printer)
+    def __init__(self: any):
+        self.handlers = WCDict(default_value=WCHandler)
+        self.printers = WCDict(default_value=WCPrinter)
         self.parser_builder = WoodchipperCore.default_parser
         self.debug_mode_description = "Runs the script in debug mode."
 
-    def set_parser_builder(self, build_func):
+    def set_parser_builder(self, build_func: callable) -> utilities.wccore.WoodchipperCore:
         self.parser_builder = build_func
+        return self
 
-    def set_debug_mode_description(self, desc):
+    def set_debug_mode_description(self, desc: str) -> utilities.wccore.WoodchipperCore:
         self.debug_mode_description = desc
+        return self
 
-    def add_mode(self, key, handler, printer):
+    def add_mode(self, key: str, handler: WCHandler, printer: WCPrinter) -> utilities.wccore.WoodchipperCore:
         self.handlers[key] = handler
         self.printers[key] = printer
+        return self
 
     def run(self):
         cli = self.build_cli()
         control = self.build_controller()
         process_request = cli.process_request(sys.argv)
-        if not process_request.mode == C.MODE.NONE:
+        if not process_request.mode == "none":
             control.process_request(process_request)
             cli.display_results(control.results)
 
-    def build_parser_function(self):
+    def build_parser_function(self) -> WCParser:
         parser = self.parser_builder()
         parser.add_argument("--version",
                             description="Prints the version of the script.")
@@ -44,30 +50,25 @@ class WoodchipperCore:
         parser.add_argument("-d", "--debug", shaper=bool_from_user, nargs=1,
                             description=self.debug_mode_description)
         parser.add_argument("--test", nargs=1, hide=True)
+        if "default" not in parser.args:
+            parser.add_argument("mode", hide=True,
+                                description="The mode we are operating in.")
         return parser
 
-    def build_cli(self):
+    def build_cli(self) -> WCCLI:
         return WCCLI(self.printers, parser_build_function=self.build_parser_function)
 
-    def build_controller(self):
+    def build_controller(self) -> WCController:
         return WCController(self.handlers)
 
     @staticmethod
-    def default_handler(*args):
-        return args
-
-    @staticmethod
-    def default_printer(*args):
-        print(args)
-
-    @staticmethod
-    def default_parser(*args):
+    def default_parser(*args) -> WCParser:
             parser = WCParser("unknown script",
                               version="0.0.0.1",
                               description="Unknown",
                               footer="Created by Will Plachno. Copyright 2024.")
-            parser.add_argument("mode",
-                                description="The mode we are operating in.")
             parser.add_argument("target",
                                 description="The target for the script.")
+            parser.add_argument("mode",
+                                description="The mode we are operating in.")
             return parser
