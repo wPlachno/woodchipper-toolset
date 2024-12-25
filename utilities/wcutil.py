@@ -611,7 +611,7 @@ class WoodchipperSettingsFile(WoodchipperDictionaryFile):
             else:
                 out_string = S.CL_DESC_CONFIG_ERROR.format("Verbosity could not be interpreted as an integer value.")
         if not argparse_args.debug is None:
-            debug = bool_from_user(argparse_args.debug)
+            debug = argparse_args.debug
             self.flip_debug(wanted_value=debug)
             out_string += S.CL_DESC_MODE_CONFIG.format(S.DEBUG, debug)
         if not argparse_args.test is None:
