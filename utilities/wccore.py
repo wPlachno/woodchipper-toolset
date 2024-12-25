@@ -16,17 +16,20 @@ class WoodchipperCore:
         self.parser_builder = WoodchipperCore.default_parser
         self.debug_mode_description = "Runs the script in debug mode."
 
-    def set_parser_builder(self, build_func: callable) -> utilities.wccore.WoodchipperCore:
+    def set_parser_builder(self, build_func: callable):
         self.parser_builder = build_func
         return self
 
-    def set_debug_mode_description(self, desc: str) -> utilities.wccore.WoodchipperCore:
+    def set_debug_mode_description(self, desc: str):
         self.debug_mode_description = desc
         return self
 
-    def add_mode(self, key: str, handler: WCHandler, printer: WCPrinter) -> utilities.wccore.WoodchipperCore:
+    def add_mode(self, key: str, handler: type[WCHandler], printer: type[WCPrinter], default:bool=False):
         self.handlers[key] = handler
         self.printers[key] = printer
+        if default:
+            self.handlers["default"] = handler
+            self.printers["default"] = printer
         return self
 
     def run(self):
@@ -50,7 +53,7 @@ class WoodchipperCore:
         parser.add_argument("-d", "--debug", shaper=bool_from_user, nargs=1,
                             description=self.debug_mode_description)
         parser.add_argument("--test", nargs=1, hide=True)
-        if "default" not in parser.args:
+        if not WoodchipperCore.check_for_mode(parser.args):
             parser.add_argument("mode", hide=True,
                                 description="The mode we are operating in.")
         return parser
@@ -72,3 +75,10 @@ class WoodchipperCore:
             parser.add_argument("mode",
                                 description="The mode we are operating in.")
             return parser
+
+    @staticmethod
+    def check_for_mode(args):
+        for arg in args:
+            if arg.name == "mode":
+                return True
+        return False

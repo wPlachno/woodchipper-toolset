@@ -29,9 +29,9 @@ class WoodchipperCommandLineInterface:
         if not results.data.success:
             self.printer.error(results.data.error)
         else:
-            printer = self.printers[results.mode]
-            printer(self.request, self.printer)
-            printer.print()
+            printer_type = self.printers[results.mode]
+            printer_obj = printer_type(results, self.printer)
+            printer_obj.print()
 
     def _check_config(self):
         proceed, out_string, test = self.profile.check_parser(self.request)

@@ -23,6 +23,7 @@ class KEY:
 
     class RESULTS:
         HANDLER = "handler"
+        TARGET = "target"
         SUCCESS = "success"
         ERROR = "error"
         TOOLKITS = "toolkits"
@@ -69,6 +70,11 @@ class HANDLER:
     class GRAB:
         TOOLKIT = "grab.toolkit"
         CLONE = "grab.clone"
+
+    class TARGET:
+        ALL = "all"
+        TOOLKIT = "toolkit"
+        CLONE = "clone"
 
 # MODE represents the operation represented in the request passed to the Controller
 class MODE:

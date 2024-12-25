@@ -1,5 +1,5 @@
 from utilities.wcutil import WoodchipperNamespace as WCNamespace
-from wcresponse import WoodchipperCoreResponse as WCResponse
+from utilities.wcresponse import WoodchipperCoreResponse as WCResponse
 
 
 class WoodchipperController:
@@ -20,5 +20,6 @@ class WoodchipperController:
             handler = handler_type(self.request, self.results)
             self.data = handler.handle()
             self.results.data = self.data
+            self.results.success = True
         else:
             self.results.error = "Unable to figure out which handler should operate on the request."

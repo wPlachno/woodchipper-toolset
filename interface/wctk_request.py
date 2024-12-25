@@ -16,8 +16,6 @@ def build_parser():
                         description="The path for the target. Only necessary when adding a new toolkit or clone.")
     parser.add_argument("-f", "--force", default=False,
                         description="Modifies push or grab tasks to ignore the status of the destination.")
-    parser.add_argument("--version")
-    parser.add_argument("--help", "-h")
     return parser
 
 def path_shaper(text):
