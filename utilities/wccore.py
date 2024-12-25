@@ -49,7 +49,7 @@ class WoodchipperCore:
         parser.add_argument("-c", "--config", default=False,
                             description="Limits script completion to configuration settings.")
         parser.add_argument("-v", "--verbosity", shaper=int_from_string, nargs=1,
-                            description="Sets how complete the script printing will be.\n0: No printing.\n1: Success/Fail only.\n3:Descriptive, user-based output.\n4.Verbose yet succinct output for developers.")
+                            description="Sets how complete the script printing will be.\n0: No printing.\n1: Success/Fail only.\n2: Descriptive, user-based output.\n3. Verbose yet succinct output for developers.")
         parser.add_argument("-d", "--debug", shaper=bool_from_user, nargs=1,
                             description=self.debug_mode_description)
         parser.add_argument("--test", nargs=1, hide=True)
