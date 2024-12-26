@@ -1,6 +1,9 @@
+# wcprinter.py
+# Version: 0.0.1.000
+# Last Changes: 12/25/24
+
 from utilities.wcconstants import Verbosity
 from interface import constants as C
-
 
 class WoodchipperToolkitPrinter:
     def __init__(self, verbosity=Verbosity.NORMAL):

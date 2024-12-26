@@ -1,7 +1,11 @@
+# wcparser.py
+# Version: 0.0.1.000
+# Last Changes: 12/25/24
+
+import sys
 from types import SimpleNamespace
 
 from utilities import wcconstants as S
-import sys
 
 class CLP_Argument:
     def __init__(self, *name_or_tags, default=None, description="", optional=True, nargs=0, choices=None, hide=False, shaper=None):

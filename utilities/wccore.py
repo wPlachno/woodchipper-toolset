@@ -1,7 +1,9 @@
+# wccore.py
+# Version: 0.0.1.000
+# Last Changes: 12/25/24
+
 import sys
 
-import utilities.wcconstants as C
-import utilities
 from utilities.wccli import WoodchipperCommandLineInterface as WCCLI
 from utilities.wccontroller import WoodchipperController as WCController
 from utilities.wcmodehandler import WoodchipperCoreModeHandler as WCHandler

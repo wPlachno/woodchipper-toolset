@@ -1,5 +1,8 @@
-from difflib import *
+# wcdiff.py
+# Version: 0.0.1.000
+# Last Changes: 12/25/24
 
+from difflib import *
 from utilities.wcutil import WoodChipperFile as WCFile
 
 class COLOR:

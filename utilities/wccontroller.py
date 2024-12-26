@@ -1,6 +1,8 @@
-from utilities.wcutil import WoodchipperNamespace as WCNamespace
-from utilities.wcresponse import WoodchipperCoreResponse as WCResponse
+# wccontroller.py
+# Version: 0.0.1.000
+# Last Changes: 12/25/24
 
+from utilities.wcresponse import WoodchipperCoreResponse as WCResponse
 
 class WoodchipperController:
     def __init__(self, handlers):
@@ -12,7 +14,6 @@ class WoodchipperController:
     def process_request(self, process_request):
         self.request = process_request
         self.results.build_from_request(self.request)
-        # if self.request.debug:
         handler_id = self.request.mode
         if handler_id:
             self.results.mode = handler_id
