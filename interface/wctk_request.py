@@ -5,7 +5,7 @@ from utilities.wcparser import CLParser as WCParser
 
 def build_parser():
     parser = WCParser("wctk",
-                      version="0.0.0.1",
+                      version="0.0.1.101",
                       description="A script for maintaining several copies of a toolkit between several projects.",
                       footer="Created by Will Plachno. Copyright 2024.")
     parser.add_argument("mode", choices=["show", "add", "grab", "push"], default="show",
