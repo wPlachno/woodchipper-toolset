@@ -235,18 +235,13 @@ There are a couple of app-wide variables that we may need to adjust. This includ
 
 - Formatting
   - Order imports
-    
     - sys
-    
     - utilities
-    
     - interface
-    
     - core
   - Rename wctk_printer.py to just wcprinter.py
 - Refactoring
   - Separate constants into package specific constants files.
-  
   - Separate out WCCore Error Handling. 
 - Functionality
   - Mode to list current directory with wctk details
@@ -257,14 +252,16 @@ There are a couple of app-wide variables that we may need to adjust. This includ
     - Remove Toolkit
     - Edit Toolkit
   - Auto-detection when clone moved?
-  - 
+  - Alter tag detection so that Version does not require colon.
 
 ## Versions
 
 ### 0.0.1.000
 
 - Feature complete, but grab and push need more testing.
+
 - Added:
+  
   - wctk.py - The core command-line script
   - constants.py - Constants for the wctk scripts
   - wctk_cli.py - The command line interface controller
@@ -280,14 +277,23 @@ There are a couple of app-wide variables that we may need to adjust. This includ
   - wctk_tracker.py - A base model for tracking a name, a path, and a record
   - wctk_record.py - A model of the version and the last modified date
   - wctk_diff.py - Compiles a diff between two files.
+
 - Functionality Added:
+  
   - Command line parsing, including wcprofile configuration.
+  
   - 'Show' functionality
+    
     - Show Clone now also prints out diff of core -> clone
+  
   - 'Add' functionality
+  
   - 'Push' functionality
+  
   - 'Grab' functionality
+    
     - Grab Toolkit now increases the version of the toolkit appropriately. 
       
       ### 0.0.0.1
+
 - Added wcutil and wcconstants
