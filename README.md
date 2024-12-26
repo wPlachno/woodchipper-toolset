@@ -239,7 +239,6 @@ There are a couple of app-wide variables that we may need to adjust. This includ
     - utilities
     - interface
     - core
-  - Rename wctk_printer.py to just wcprinter.py
 - Refactoring
   - Separate constants into package specific constants files.
   - Separate out WCCore Error Handling. 
@@ -255,6 +254,23 @@ There are a couple of app-wide variables that we may need to adjust. This includ
   - Alter tag detection so that Version does not require colon.
 
 ## Versions
+
+### 0.0.1.001
+
+- Integrated the WoodchipperCore system.
+- Added:
+  - core.wctk_handlers.py
+  - interface.wctk_printer.py
+  - utilities.wccli.py
+  - utilities.wccontroller.py
+  - utilities.wcmodehandler.py
+  - utilities.wcmodeprinter.py
+  - utilities.wcprinter.py
+  - utilities.wcresponse.py
+- Removed:
+  - wctk_cli.py
+  - wctk_controller.py
+  - wctk_handler.py
 
 ### 0.0.1.000
 
@@ -279,21 +295,14 @@ There are a couple of app-wide variables that we may need to adjust. This includ
   - wctk_diff.py - Compiles a diff between two files.
 
 - Functionality Added:
-  
   - Command line parsing, including wcprofile configuration.
-  
   - 'Show' functionality
-    
     - Show Clone now also prints out diff of core -> clone
-  
   - 'Add' functionality
-  
   - 'Push' functionality
-  
   - 'Grab' functionality
-    
     - Grab Toolkit now increases the version of the toolkit appropriately. 
       
-      ### 0.0.0.1
+### 0.0.0.1
 
 - Added wcutil and wcconstants

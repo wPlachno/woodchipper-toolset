@@ -1,20 +1,14 @@
+# wctk.py
+# Version: 0.0.1.001
+# Will Plachno, 12/26/2024
 
 import sys
 
-from interface.constants import MODE
-from interface.wctk_cli import WoodchipperToolkitCommandLineInterface as WCCLI
-from interface.wctk_controller import WoodchipperController as WCController
 from utilities.wccore import WoodchipperCore as WCCore
-import interface.wctk_request as my_parser
-import core.wtck_handlers as handlers
+from interface.constants import MODE
 import interface.wctk_printer as printers
-
-
-""" Todo
-- build out the wctk_controller pipelines 
-- build out the WoodchipperToolkit and WoodchipperToolkitClone classes 
-- No target specified errors, wctk_handlers.handle_all
-"""
+import interface.wctk_request as my_parser
+import core.wctk_handlers as handlers
 
 
 def _main(args):
