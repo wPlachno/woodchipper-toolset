@@ -2,14 +2,12 @@
 # Version: 0.0.1.000
 # Last Changes: 12/25/24
 
-import interface.wctk_request as WCParser
 from utilities.wcutil import WoodchipperSettingsFile as WCProfile
 from utilities.wcprinter import WoodchipperToolkitPrinter as WCPrinter
-from utilities.wcconstants import Verbosity
-from interface.constants import MODE, HANDLER, OUT, clr_state as CLR_STATE
+from utilities.wcconstants import Verbosity, MODE
 
 class WoodchipperCommandLineInterface:
-    def __init__(self, printers, parser_build_function=WCParser.build_parser):
+    def __init__(self, printers, parser_build_function):
         self.profile = WCProfile()
         self.parser = parser_build_function()
         self._check_parser_for_mode()

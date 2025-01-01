@@ -54,6 +54,7 @@ class COLOR:
     QUOTE=  COLOUR.GREEN
     ACTIVE= COLOUR.GREEN
     CANCEL= COLOUR.RED
+    DEFAULt=COLOUR.DEFAULT
 
 def clr(text, color):
     return color + text + COLOUR.DEFAULT
@@ -99,3 +100,10 @@ class Verbosity:
     NORMAL = 2 # Includes warnings and big errors
     DEBUG = 3 # Print all messages possible
 
+class MODE:
+    NONE = "none"
+    TEST = "test"
+class PRINT:
+    ERROR = clr("ERROR: ", COLOR.CANCEL)+OP[0]+KEY.NL
+    KVP = clr(OP[0], COLOR.SIBLING)+KEY.CS+OP[1]
+    LABEL = clr(OP[0], COLOR.SUPER)+KEY.CS

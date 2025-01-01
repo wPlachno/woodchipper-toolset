@@ -61,7 +61,7 @@ class WoodchipperCore:
         return parser
 
     def build_cli(self) -> WCCLI:
-        return WCCLI(self.printers, parser_build_function=self.build_parser_function)
+        return WCCLI(self.printers, self.build_parser_function)
 
     def build_controller(self) -> WCController:
         return WCController(self.handlers)
