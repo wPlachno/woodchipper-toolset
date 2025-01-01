@@ -54,7 +54,7 @@ class COLOR:
     QUOTE=  COLOUR.GREEN
     ACTIVE= COLOUR.GREEN
     CANCEL= COLOUR.RED
-    DEFAULt=COLOUR.DEFAULT
+    DEFAULT=COLOUR.DEFAULT
 
 def clr(text, color):
     return color + text + COLOUR.DEFAULT

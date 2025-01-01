@@ -226,12 +226,12 @@ class WoodchipperNamespace(SimpleNamespace):
         setattr(self, key, value)
 
     def __str__(self):
-        out_str = S.COLOR_SUPER + self._name + S.COLOR_DEFAULT + ": { "
+        out_str = S.clr(self._name, S.COLOR.SUPER) + ": { "
         if len(self.__dict__) > 0:
             for key in self.__dict__:
                 if key != "_name":
                     value_str = str(self.__dict__[key]).replace("\n", "\n\t")
-                    out_str += f"\n\t{S.COLOR_SIBLING}{key}{S.COLOR_DEFAULT}: {value_str}"
+                    out_str += f"\n\t{S.clr(key, S.COLOR.SIBLING)}: {value_str}"
             out_str += "\n"
         out_str += "}"
         return out_str
@@ -341,16 +341,16 @@ class WoodChipperFile:
         self.text = list(())
 
         if auto_create and not self.path.exists():
-            file = open(self.path, S.EXCLUSIVE_CREATION)
+            file = open(self.path, S.FILE_IO.EXCLUSIVE_CREATION)
             file.close()
 
     def read(self):
-        with (open(self.path, S.READ)
+        with (open(self.path, S.FILE_IO.READ)
               as text_file):
             self.text = list(text_file)
 
     def write(self):
-        with (open(self.path, S.WRITE)
+        with (open(self.path, S.FILE_IO.WRITE)
               as text_file):
             for text_line in self.text:
                 text_file.write(text_line)
@@ -373,21 +373,21 @@ class WoodChipperFile:
 
     def append_line(self, text):
         fixed_text = text
-        if fixed_text[-1] != S.NL:
-            fixed_text = fixed_text + S.NL
+        if fixed_text[-1] != S.KEY.NL:
+            fixed_text = fixed_text + S.KEY.NL
         self.text.append(fixed_text)
 
     def insert_line(self, index, text):
         fixed_text = text
-        if fixed_text[-1] != S.NL:
-            fixed_text = fixed_text + S.NL
+        if fixed_text[-1] != S.KEY.NL:
+            fixed_text = fixed_text + S.KEY.NL
         self.text.insert(index, fixed_text)
 
     def run_per_line(self, _func):
         return_value = True
         for rawLine in self.text:
             line = rawLine
-            if line[-1] == S.NL:
+            if line[-1] == S.KEY.NL:
                 line = line[:-1]
             return_value = return_value and _func(line)
         return return_value
@@ -441,30 +441,30 @@ class WoodchipperListFile(WoodChipperFile):
         return self.text[item][:-1]
 
     def __setitem__(self, key, value):
-        self.text[key] = str(value) + S.NL
+        self.text[key] = str(value) + S.KEY.NL
 
     def  __contains__(self, item):
-        text = str(item)+S.NL
+        text = str(item)+S.KEY.NL
         return text in self.text
 
     def __len__(self):
         return len(self.text)
 
     def __str__(self):
-        text = S.EMPTY
+        text = S.KEY.EMPTY
         for line in self.text:
-            text = text + (line[:-1]+S.CD)
+            text = text + (line[:-1]+S.KEY.CD)
         return text[:-2]
 
     def add(self, value):
-        text = str(value)+S.NL
+        text = str(value)+S.KEY.NL
         if (not self.unique) or (text not in self.text):
             self.text.append(text)
             return True
         return False
 
     def remove(self, value):
-        text = str(value)+S.NL
+        text = str(value)+S.KEY.NL
         found = text in self.text
         self.text.remove(text)
         return found
@@ -500,7 +500,7 @@ class WoodchipperDictionaryFile:
     def save(self):
         self.file.clear()
         for key in self.keys:
-            self.file.append_line(key+S.SDL+self.values[key])
+            self.file.append_line(key+S.KEY.SDL+self.values[key])
         self.file.write()
 
 
@@ -530,7 +530,7 @@ class WoodchipperDictionaryFile:
         return self.values[key]
 
     def _add_from_file(self, text):
-        brokenLine = text.split(S.SDL)
+        brokenLine = text.split(S.KEY.SDL)
         _key = brokenLine[0]
         _val = brokenLine[1]
         self.set_key(_key, _val)
@@ -607,13 +607,13 @@ class WoodchipperSettingsFile(WoodchipperDictionaryFile):
             verbosity = int_from_string(argparse_args.verbosity)
             if verbosity is not None:
                 self.set_verbosity(verbosity)
-                out_string = S.CL_DESC_MODE_CONFIG.format(S.VERBOSE, verbosity)
+                out_string = S.CL_TASK.MODE_CONFIG.format(S.VERBOSE, verbosity)
             else:
-                out_string = S.CL_DESC_CONFIG_ERROR.format("Verbosity could not be interpreted as an integer value.")
+                out_string = S.CL_TASK.CONFIG_ERROR.format("Verbosity could not be interpreted as an integer value.")
         if not argparse_args.debug is None:
             debug = argparse_args.debug
             self.flip_debug(wanted_value=debug)
-            out_string += S.CL_DESC_MODE_CONFIG.format(S.DEBUG, debug)
+            out_string += S.CL_TASK.MODE_CONFIG.format(S.DEBUG, debug)
         if not argparse_args.test is None:
             test = argparse_args.test
             # Note: We can test WCUTIL here by checking test, doing the test, and returning the result
@@ -690,12 +690,12 @@ def process_str_array_new_lines(target):
     :param target: A list of strings
     :return: a list of more strings with no new lines
     """
-    newLines = list(())
+    new_lines = list(())
     for _string in target:
-        for line in _string.split(S.NL):
+        for line in _string.split(S.KEY.NL):
             if len(line) > 0:
-                newLines.append(line)
-    return newLines
+                new_lines.append(line)
+    return new_lines
 
 
 def run_on_sorted_list(target_list, function_given_item):
@@ -711,9 +711,9 @@ def run_on_sorted_list(target_list, function_given_item):
 
 
 def string_from_bool(value:bool, include_color:bool=False):
-    pretext = S.COLOR_ACTIVE if value else S.COLOR_CANCEL
+    pretext = S.COLOR.ACTIVE if value else S.COLOR.CANCEL
     text = S.ON if value else S.OFF
-    return pretext+text+S.COLOR_DEFAULT if include_color else text
+    return pretext+text+S.COLOR.DEFAULT if include_color else text
 
 
 def tail_matches_token(text, token):
@@ -730,11 +730,11 @@ def text_has_paths(text):
     """
     has_paths = False
     try:
-        text.index(S.FS)
+        text.index(S.KEY.FS)
         has_paths = True
     finally:
         try:
-            text.index(S.BS)
+            text.index(S.KEY.BS)
             has_paths = True
         finally:
             return has_paths
