@@ -6,6 +6,7 @@ class WoodchipperCoreModeHandler:
     def __init__(self, request: any, response: any):
         self.request = request
         self.response = response
+        self.debug = request.debug
 
     def handle(self):
         return True
