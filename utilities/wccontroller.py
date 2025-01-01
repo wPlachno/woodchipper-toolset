@@ -19,7 +19,7 @@ class WoodchipperController:
             self.results.mode = handler_id
             handler_type = self.handlers[handler_id]
             handler = handler_type(self.request, self.results)
-            self.data = handler.handle()
+            self.data = handler.run()
             self.results.data = self.data
             self.results.success = True
         else:

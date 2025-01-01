@@ -108,3 +108,6 @@ class PRINT:
     ERROR = clr("ERROR: ", COLOR.CANCEL)+OP[0]+KEY.NL
     KVP = clr(OP[0], COLOR.SIBLING)+KEY.CS+OP[1]
     LABEL = clr(OP[0], COLOR.SUPER)+KEY.CS
+class RESULTS:
+    SUCCESS = "success"
+    ERROR = "error"
