@@ -1,7 +1,8 @@
 """
 wcutil.py
 Created by Will Plachno on 11/30/23
-Version: 0.0.1.001
+Version: 0.0.1.010
+Last Changes: 01/01/2025
 
 Woodchipper Utilities
 An assortment of helpful functions and classes.

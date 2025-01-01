@@ -1,6 +1,6 @@
 # wcparser.py
-# Version: 0.0.1.000
-# Last Changes: 12/25/24
+# Version: 0.0.1.010
+# Last Changes: 01/01/2025
 
 import sys
 from types import SimpleNamespace
@@ -46,7 +46,7 @@ class CLP_Argument:
             self.value = value
 
     def get_usage(self):
-        usage_clr = S.COLOR_SUPER
+        usage_clr = S.COLOR.SUPER
         usage_str = ( "["+self.name+"]" if self.optional else self.name )
         if self.choices:
             usage_str = "{" + ", ".join(self.choices) + "}"
@@ -54,11 +54,11 @@ class CLP_Argument:
             usage_str = ", ".join(self.tags)
             if self.optional:
                 usage_str = "[" + usage_str + "]"
-            usage_clr = S.COLOR_SIBLING
-        return usage_clr + usage_str + S.COLOR_DEFAULT
+            usage_clr = S.COLOR.SIBLING
+        return S.clr(usage_str, usage_clr)
 
     def print_help(self):
-        return self.get_usage() + S.NL + S.DH + self.description + S.NL
+        return self.get_usage() + S.KEY.NL + S.KEY.DH + self.description + S.KEY.NL
 
     def check_arg(self, index, args):
         current_arg = args[index]

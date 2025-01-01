@@ -1,7 +1,8 @@
 """
 wcconstants.py
 Created by Will Plachno on 09/07/24
-Version: 0.0.0.102
+Version: 0.0.1.010
+Last Changes: 01/01/2025
 
 Woodchipper Constants
 An assortment of helpful strings and other constants.

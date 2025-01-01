@@ -1,6 +1,6 @@
 # wcresponse.py
-# Version: 0.0.1.000
-# Last Changes: 12/25/24
+# Version: 0.0.1.010
+# Last Changes: 01/01/2025
 
 
 class WoodchipperCoreResponse:

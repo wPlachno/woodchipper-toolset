@@ -1,5 +1,5 @@
 # wcmodehandler.py
-# Version: 0.0.1.001
+# Version: 0.0.1.010
 # Last Changes: 01/01/2025 - Made default handler debug aware
 
 class WoodchipperCoreModeHandler:

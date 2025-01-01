@@ -1,5 +1,5 @@
 # wcmodeprinter.py
-# Version: 0.0.1.000
+# Version: 0.0.1.010
 # Last Changes: 12/25/24
 
 from utilities.wcprinter import WoodchipperToolkitPrinter
