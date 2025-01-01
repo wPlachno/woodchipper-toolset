@@ -23,7 +23,8 @@ class WoodchipperToolkitHandler(WCHandler):
             target_pieces = self.request.target.split('/')
             self.target_toolkit = target_pieces[0]
             self.target_clone = target_pieces[1] if len(target_pieces)>1 else None
-        self.results = self._init_results()
+        self.log_kvp(KEY.RESULTS.HANDLER, HANDLER.GENERIC)
+        self.log_kvp(KEY.RESULTS.TARGET, HANDLER.TARGET.ALL)
 
     def handle(self):
         handler_target = self._handle_clone
@@ -42,14 +43,6 @@ class WoodchipperToolkitHandler(WCHandler):
         handler_result = handler_target()
         self.archive.save()
         return handler_result
-
-    def _init_results(self):
-        self.results = WCNamespace("HandlerResults")
-        self.results.add(KEY.RESULTS.HANDLER, HANDLER.GENERIC)
-        self.results.add(KEY.RESULTS.TARGET, HANDLER.TARGET.ALL)
-        self.results.add(KEY.RESULTS.ERROR, None)
-        self.results.add(KEY.RESULTS.SUCCESS, False)
-        return self.results
 
     def _claim_toolkit(self):
         data = None
@@ -81,17 +74,14 @@ class WoodchipperToolkitHandler(WCHandler):
 
 
     def _handle_all(self):
-        self.results.error = "No target specified."
-        return self.results
+        self.log_error("No target specified")
 
     def _handle_clone(self):
-        self.results.add(KEY.RESULTS.TOOLKIT, None)
-        self.results.add(KEY.RESULTS.CLONE, None)
-        return self.results
+        self.log_kvp(KEY.RESULTS.TOOLKIT, None)
+        self.log_kvp(KEY.RESULTS.CLONE, None)
 
     def _handle_toolkit(self):
-        self.results.add(KEY.RESULTS.TOOLKIT, None)
-        return self.results
+        self.log_kvp(KEY.RESULTS.TOOLKIT, None)
 
     @staticmethod
     def _record_toolkits(archive):
@@ -142,32 +132,31 @@ class WoodchipperHandlerAdd(WoodchipperToolkitHandler):
         WoodchipperToolkitHandler._handle_toolkit(self)
         if self.target_toolkit in self.archive:
             tk = self.archive[self.target_toolkit]
-            self.results.error = ERROR.ADD.TOOLKIT.ALREADY_REGISTERED.format(tk.name, tk.path)
+            self.log_error(ERROR.ADD.TOOLKIT.ALREADY_REGISTERED.format(tk.name, tk.path))
         elif pathlib.Path(self.request.path).is_dir():
-            self.results.error = ERROR.ADD.TOOLKIT.IS_DIRECTORY.format(self.target_toolkit, self.request.path)
+            self.log_error(ERROR.ADD.TOOLKIT.IS_DIRECTORY.format(self.target_toolkit, self.request.path))
         else:
             self.archive.add_toolkit(self.target_toolkit, self.request.path.resolve())
             self.archive.save()
             self.results.toolkit = self._record_toolkit(self.archive[self.target_toolkit])
-            self.results.success = True
-        return self.results
+            self.log_success()
 
     def _handle_clone(self):
-        self.results.add(KEY.CLONE.EXISTED, True)
+        self.log_kvp(KEY.CLONE.EXISTED, True)
         self.results.handler = HANDLER.ADD.CLONE
         WoodchipperToolkitHandler._handle_clone(self)
         if not self.target_toolkit in self.archive:
-            self.results.error = ERROR.ADD.CLONE.INVALID_TOOLKIT.format(self.target_toolkit)
+            self.log_error(ERROR.ADD.CLONE.INVALID_TOOLKIT.format(self.target_toolkit))
         elif self.target_clone in self.archive[self.target_toolkit]:
             cl = self.archive[self.target_toolkit][self.target_clone]
-            self.results.error = ERROR.ADD.CLONE.ALREADY_REGISTERED.format(cl.name, cl.path)
+            self.log_error(ERROR.ADD.CLONE.ALREADY_REGISTERED.format(cl.name, cl.path))
         else:
             tk = self.archive[self.target_toolkit]
             target_path = pathlib.Path(self.request.path)
             descendant_path = target_path / pathlib.Path(tk.path).name
             target_is_directory = target_path.is_dir()
             if target_is_directory and descendant_path.exists():
-                self.results.error = ERROR.ADD.CLONE.ALREADY_EXISTS.format(descendant_path)
+                self.log_error(ERROR.ADD.CLONE.ALREADY_EXISTS.format(descendant_path))
             else:
                 if target_is_directory:
                     target_path = descendant_path
@@ -177,8 +166,7 @@ class WoodchipperHandlerAdd(WoodchipperToolkitHandler):
                 self.archive.save()
                 self.results.toolkit = self._record_toolkit(tk)
                 self.results.clone = self._record_clone(tk[self.target_clone])
-                self.results.success = True
-        return self.results
+                self.log_success()
 
 class WoodchipperHandlerPush(WoodchipperToolkitHandler):
     def __init__(self, request, response):
@@ -189,14 +177,13 @@ class WoodchipperHandlerPush(WoodchipperToolkitHandler):
         toolkit_resolved, toolkit = self._claim_toolkit()
         if toolkit_resolved:
             if len(toolkit.clones) == 0:
-                self.results.error = ERROR.PUSH.TOOLKIT.NO_CLONES.format(toolkit.name)
+                self.log_error(ERROR.PUSH.TOOLKIT.NO_CLONES.format(toolkit.name))
             else:
                 clones = []
                 for clone in toolkit.clones:
                     clones.append(self._push_clone(toolkit, clone))
-                self.results.add(KEY.TOOLKIT.CLONES, clones)
-                self.results.success = True
-        return self.results
+                self.log_kvp(KEY.TOOLKIT.CLONES, clones)
+                self.log_success()
 
     def _handle_clone(self):
         self.results.handler = HANDLER.PUSH.CLONE
@@ -206,7 +193,6 @@ class WoodchipperHandlerPush(WoodchipperToolkitHandler):
             self.results.clone = self._push_clone(toolkit, clone)
             self.results.success = self.results.clone.replaced
             self.results.error = self.results.clone.error
-        return self.results
 
     def _push_clone(self, toolkit, clone):
         error = None
@@ -234,15 +220,14 @@ class WoodchipperHandlerGrab(WoodchipperToolkitHandler):
         self.results.handler = HANDLER.GRAB.TOOLKIT
         if toolkit_resolved:
             if not self.request.force and toolkit.state == STATE.UP_TO_DATE:
-                self.results.error = ERROR.GRAB.TOOLKIT.NO_CHANGES.format(toolkit.name)
+                self.log_error(ERROR.GRAB.TOOLKIT.NO_CHANGES.format(toolkit.name))
             else:
                 old_version = toolkit.archive.version
                 new_version = self._increment_version(old_version)
                 toolkit.set_version(new_version)
                 self.results.toolkit = self._record_toolkit(toolkit, [(KEY.TOOLKIT.OLD_VERSION, old_version)])
                 self.results.clones = self._record_clones(toolkit)
-                self.results.success = True
-        return self.results
+                self.log_success()
 
     @staticmethod
     def _increment_version(old_version):
@@ -266,22 +251,20 @@ class WoodchipperHandlerGrab(WoodchipperToolkitHandler):
         if clone_resolved:
             if not toolkit.state == STATE.UP_TO_DATE and not self.request.force:
                 # check for force or toolkit is up_to_date : ERROR.GRAB.CLONE.TOOLKIT_CHANGES
-                self.results.error = ERROR.GRAB.CLONE.TOOLKIT_HAS_CHANGES.format(toolkit.name)
+                self.log_error(ERROR.GRAB.CLONE.TOOLKIT_HAS_CHANGES.format(toolkit.name))
             elif not clone.state == STATE.AFTER_CORE and not self.request.force:
                 # check for force or clone is after_core : ERROR.GRAB.CLONE.NO_NEW_VERSION
-                self.results.error = ERROR.GRAB.CLONE.NO_NEW_VERSION.format(toolkit.name, clone.name)
+                self.log_error(ERROR.GRAB.CLONE.NO_NEW_VERSION.format(toolkit.name, clone.name))
             else:
                 shutil.copy2(clone.path, toolkit.path)
-                self.results.success = True
-        return self.results
+                self.log_success()
 
 class WoodchipperHandlerShow(WoodchipperToolkitHandler):
     def __init__(self, request, archive):
         WoodchipperToolkitHandler.__init__(self, request, archive, HANDLER.SHOW)
     def _handle_all(self):
         self.results.add(KEY.RESULTS.TOOLKITS, WoodchipperToolkitHandler._record_toolkits(self.archive))
-        self.results.success = True
-        return self.results
+        self.log_success()
 
     def _handle_toolkit(self):
         self.results.handler = HANDLER.SHOW.TOOLKIT
@@ -289,8 +272,7 @@ class WoodchipperHandlerShow(WoodchipperToolkitHandler):
         toolkit_resolved, toolkit = self._claim_toolkit()
         if toolkit_resolved:
             self.results.add(KEY.RESULTS.CLONES, self._record_clones(toolkit))
-            self.results.success = True
-        return self.results
+            self.log_success()
 
     def _handle_clone(self):
         self.results.handler = HANDLER.SHOW.CLONE
@@ -302,9 +284,6 @@ class WoodchipperHandlerShow(WoodchipperToolkitHandler):
                 if not has_changes:
                     diff_lines = None
                 self.results.add(KEY.CLONE.DIFF,diff_lines)
-                self.results.success = True
-                return self.results
+                self.log_success()
             except Exception as e:
-                self.results.error = ERROR.SHOW.CLONE.UNSUCCESSFUL_DIFF
-                return self.results
-        return self.results
+                self.log_error(ERROR.SHOW.CLONE.UNSUCCESSFUL_DIFF)

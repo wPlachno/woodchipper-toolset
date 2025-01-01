@@ -2,8 +2,8 @@
 # Version: 0.0.1.010
 # Last Changes: 01/01/2025 - Made default handler debug aware
 
-from wcutil import WoodchipperNamespace as WCNamespace
-from wcconstants import RESULTS
+from utilities.wcutil import WoodchipperNamespace as WCNamespace
+from utilities.wcconstants import RESULTS
 
 class WoodchipperCoreModeHandler:
     def __init__(self, request: any, response: any):
