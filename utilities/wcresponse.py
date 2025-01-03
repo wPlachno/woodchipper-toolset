@@ -1,6 +1,6 @@
 # wcresponse.py
-# Version: 0.0.1.010
-# Last Changes: 01/01/2025
+# Version: 0.0.1.011
+# Last Changes: 01/03/2025
 
 
 class WoodchipperCoreResponse:
@@ -22,6 +22,6 @@ class WoodchipperCoreResponse:
 
     def __str__(self):
         if self.success:
-            return f"SUCCESS: [{self.data}]"
+            return f"M: {self.mode} (Success): {self.data}"
         else:
-            return f"ERROR: [{self.error}]"
+            return f"M: {self.mode} (Error): {self.error}"
