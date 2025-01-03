@@ -1,6 +1,6 @@
 # wccli.py
-# Version: 0.0.1.010
-# Last Changes: 01/01/2025
+# Version: 0.0.1.011
+# Last Changes: 01/03/2025
 
 from utilities.wcutil import WoodchipperSettingsFile as WCProfile
 from utilities.wcprinter import WoodchipperToolkitPrinter as WCPrinter
@@ -25,7 +25,7 @@ class WoodchipperCommandLineInterface:
         return self.request
 
     def display_results(self, results):
-        self.printer.pr(results, Verbosity.DEBUG)
+        self._print_response(results, Verbosity.DEBUG)
         self.printer.nl(Verbosity.DEBUG)
         if not results.data.success:
             self.printer.error(results.data.error)
@@ -54,6 +54,12 @@ class WoodchipperCommandLineInterface:
     def _print_request(self, verbosity=Verbosity.DEBUG):
         self.printer.label("Request", verbosity)
         req = vars(self.request)
+        for key in req:
+            self.printer.kvp(key, req[key], verbosity)
+
+    def _print_response(self, response, verbosity=Verbosity.DEBUG):
+        self.printer.label("Response", verbosity)
+        req = vars(response)
         for key in req:
             self.printer.kvp(key, req[key], verbosity)
 
