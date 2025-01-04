@@ -1,6 +1,8 @@
 # wccore.py
-# Version: 0.0.1.011
-# Last Changes: 01/03/2025
+# Written By: Will Plachno
+# Created: 12/24/2024
+# Version: 0.0.1.012
+# Last Changes: 01/04/2025
 
 import sys
 
@@ -16,10 +18,15 @@ class WoodchipperCore:
         self.handlers = WCDict(default_value=WCHandler)
         self.printers = WCDict(default_value=WCPrinter)
         self.parser_builder = WoodchipperCore.default_parser
+        self.post_parser = None
         self.debug_mode_description = "Runs the script in debug mode."
 
     def set_parser_builder(self, build_func: callable):
         self.parser_builder = build_func
+        return self
+
+    def set_post_parser(self, post_parser: callable):
+        self.post_parser = post_parser
         return self
 
     def set_debug_mode_description(self, desc: str):
@@ -61,7 +68,7 @@ class WoodchipperCore:
         return parser
 
     def build_cli(self) -> WCCLI:
-        return WCCLI(self.printers, self.build_parser_function)
+        return WCCLI(self.printers, self.build_parser_function, post_parse_function=self.post_parser)
 
     def build_controller(self) -> WCController:
         return WCController(self.handlers)
