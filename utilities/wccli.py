@@ -1,15 +1,18 @@
 # wccli.py
-# Version: 0.0.1.012
-# Last Changes: 01/04/2025
+# Written By: Will Plachno
+# Created: 12/14/24
+# Version: 0.0.1.013
+# Last Changed: 01/04/2025
 
 from utilities.wcutil import WoodchipperSettingsFile as WCProfile
 from utilities.wcprinter import WoodchipperToolkitPrinter as WCPrinter
 from utilities.wcconstants import Verbosity, MODE
 
 class WoodchipperCommandLineInterface:
-    def __init__(self, printers, parser_build_function):
+    def __init__(self, printers, parser_build_function, post_parse_function=None):
         self.profile = WCProfile()
         self.parser = parser_build_function()
+        self.post_parser = post_parse_function
         self._check_parser_for_mode()
         self.printer = WCPrinter(self.profile.verbosity)
         self.printers = printers
@@ -17,6 +20,8 @@ class WoodchipperCommandLineInterface:
 
     def process_request(self, args):
         self.request = self.parser.parse_args(args)
+        if self.post_parser:
+            self.post_parser()
         if self._check_config():
             self._print_profile(Verbosity.DEBUG)
             self.printer.nl(Verbosity.DEBUG)
