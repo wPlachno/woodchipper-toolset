@@ -1,10 +1,10 @@
 # wcparser.py
-# Version: 0.0.1.010
-# Last Changes: 01/01/2025
+# Created: 11/07/2024
+# Version: 0.0.1.011
+# Last Changed: 01/01/2025
 
 import sys
 from types import SimpleNamespace
-
 from utilities import wcconstants as S
 
 class CLP_Argument:
@@ -18,9 +18,15 @@ class CLP_Argument:
         self.hide = hide
         self.optional = optional
         self.nargs = nargs
+        self.bucket = False
         self.shaper = shaper
         self.value = self.default
-        if self.choices:
+        if self.nargs == '+':
+            self.nargs = 0
+            self.bucket = True
+            if not self.default:
+                self.value = []
+        if self.choices and not self.default:
             self.default = self.choices[0]
         self._decipher_name_or_tags(name_or_tags)
 
@@ -75,7 +81,7 @@ class CLP_Argument:
                     self.set_value(args[index+1])
                     return index+2
                 else:
-                    raise ValueError
+                    raise Exception(f"Arg {self.name} expects 1 arg to follow.")
             else:
                 value = []
                 offset = 1
@@ -85,6 +91,19 @@ class CLP_Argument:
                 self.set_value(value)
                 return index + offset
         return index
+
+    def check_pos(self, index, pos):
+        if self.flag or self.choices or index >= len(pos):
+            return index
+        if self.bucket:
+            self.set_value(pos[index:])
+            return len(pos)
+        if self.nargs > 1:
+            new_index = index + self.nargs
+            self.set_value(pos[index:new_index])
+            return new_index
+        self.set_value(pos[index])
+        return index+1
 
     def found(self):
         return self.value is None
@@ -112,6 +131,7 @@ class CLParser:
     def parse_args(self, args):
         pos_args = []
         index = 1
+        # First check args for flags and choices
         while index < len(args):
             found = False
             for arg in self.args:
@@ -123,12 +143,11 @@ class CLParser:
             if not found:
                 pos_args.append(args[index])
                 index += 1
+        # Now, deal with positional arguments
         if len(pos_args) > 0:
             target_arg = 0
             for arg in self.args:
-                if not arg.flag and not arg.choices and target_arg < len(pos_args):
-                    arg.set_value(pos_args[target_arg])
-                    target_arg += 1
+                target_arg = arg.check_pos(target_arg, pos_args)
         return self._create_namespace()
 
     def _create_namespace(self):
