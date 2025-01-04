@@ -1,6 +1,6 @@
 # wccli.py
-# Version: 0.0.1.011
-# Last Changes: 01/03/2025
+# Version: 0.0.1.012
+# Last Changes: 01/04/2025
 
 from utilities.wcutil import WoodchipperSettingsFile as WCProfile
 from utilities.wcprinter import WoodchipperToolkitPrinter as WCPrinter
@@ -19,7 +19,7 @@ class WoodchipperCommandLineInterface:
         self.request = self.parser.parse_args(args)
         if self._check_config():
             self._print_profile(Verbosity.DEBUG)
-            self.printer.nl()
+            self.printer.nl(Verbosity.DEBUG)
             self._print_request(Verbosity.DEBUG)
             self.printer.nl(Verbosity.DEBUG)
         return self.request
