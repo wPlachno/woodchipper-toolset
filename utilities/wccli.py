@@ -1,7 +1,7 @@
 # wccli.py
 # Written By: Will Plachno
 # Created: 12/14/24
-# Version: 0.0.1.013
+# Version: 0.0.1.014
 # Last Changed: 01/04/2025
 
 from utilities.wcutil import WoodchipperSettingsFile as WCProfile
@@ -21,7 +21,7 @@ class WoodchipperCommandLineInterface:
     def process_request(self, args):
         self.request = self.parser.parse_args(args)
         if self.post_parser:
-            self.post_parser()
+            self.request = self.post_parser(self.request)
         if self._check_config():
             self._print_profile(Verbosity.DEBUG)
             self.printer.nl(Verbosity.DEBUG)
