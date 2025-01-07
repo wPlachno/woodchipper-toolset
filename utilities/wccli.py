@@ -1,8 +1,8 @@
 # wccli.py
 # Written By: Will Plachno
 # Created: 12/14/24
-# Version: 0.0.1.014
-# Last Changed: 01/04/2025
+# Version: 0.0.1.015
+# Last Changed: 01/07/2025
 
 from utilities.wcutil import WoodchipperSettingsFile as WCProfile
 from utilities.wcprinter import WoodchipperToolkitPrinter as WCPrinter
@@ -32,12 +32,9 @@ class WoodchipperCommandLineInterface:
     def display_results(self, results):
         self._print_response(results, Verbosity.DEBUG)
         self.printer.nl(Verbosity.DEBUG)
-        if not results.data.success:
-            self.printer.error(results.data.error)
-        else:
-            printer_type = self.printers[results.mode]
-            printer_obj = printer_type(results, self.printer)
-            printer_obj.print()
+        printer_type = self.printers[results.mode]
+        printer_obj = printer_type(results, self.printer)
+        printer_obj.print()
 
     def _check_config(self):
         proceed, out_string, test = self.profile.check_parser(self.request)
