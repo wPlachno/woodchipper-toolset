@@ -1,8 +1,8 @@
 # wccore.py
 # Written By: Will Plachno
 # Created: 12/24/2024
-# Version: 0.0.1.012
-# Last Changes: 01/04/2025
+# Version: 0.0.1.013
+# Last Changes: 01/08/2025
 
 import sys
 
@@ -55,11 +55,11 @@ class WoodchipperCore:
                             description="Prints the version of the script.")
         parser.add_argument("-h", "help", "-help", "--help",
                             description="Prints this help documentation.")
-        parser.add_argument("-c", "config", "-config", "--config", default=False,
+        parser.add_argument("-c", "config", "-config", "--config", "cfg", "-cfg", "--cfg", default=False,
                             description="Limits script completion to configuration settings.")
-        parser.add_argument("-v", "verbosity", "-verbosity", "--verbosity", shaper=int_from_string, nargs=1,
+        parser.add_argument("-v", "verbosity", "-verbosity", "--verbosity", "verbose", "-verbose", "--verbose", shaper=int_from_string, nargs=1,
                             description="Sets how complete the script printing will be.\n0: No printing.\n1: Success/Fail only.\n2: Descriptive, user-based output.\n3. Verbose yet succinct output for developers.")
-        parser.add_argument("-d", "-debug", "--debug", shaper=bool_from_user, nargs=1,
+        parser.add_argument("-d", "debug", "-debug", "--debug", "dbg", "-dbg", "--dbg", shaper=bool_from_user, nargs=1,
                             description=self.debug_mode_description)
         parser.add_argument("--test", nargs=1, hide=True)
         if not WoodchipperCore.check_for_mode(parser.args):
