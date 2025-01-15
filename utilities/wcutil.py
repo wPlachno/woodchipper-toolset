@@ -1,7 +1,7 @@
 """
 wcutil.py
 Created by Will Plachno on 11/30/23
-Version: 0.0.1.012
+Version: 0.0.1.013
 Last Changes: 01/15/2025
 
 Woodchipper Utilities
@@ -715,7 +715,7 @@ def colorize_path(path):
     elif type(path) == PosixPath:
         parent = str(path.parent)
         name = path.name
-    return f'{s.clr(parent, s.COLOUR.GREY)}/{s.clr(name, s.COLOUR.BLUE)}'
+    return f'{s.clr(parent, s.COLOR.PATH_PARENT)}/{s.clr(name, s.COLOR.PATH_NAME)}'
 
 
 
