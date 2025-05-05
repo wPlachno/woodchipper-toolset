@@ -1,8 +1,10 @@
 # wctk.py
-# Version: 0.0.1.001
-# Will Plachno, 12/26/2024
+# Version: 0.0.1.002
+# Will Plachno, 05/05/2025
 
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 
 from utilities.wccore import WoodchipperCore as WCCore
 from interface.constants import MODE

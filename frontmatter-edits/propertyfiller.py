@@ -1,9 +1,11 @@
 # propertyfiller.py
 # Created: 8/22/24 by Will Plachno
-# Version: 0.0.2.001
-# Last Changed: 01/15/2025
+# Version: 0.0.2.002
+# Last Changed: 05/05/2025
 
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 
 from utilities.wccore import WoodchipperCore as WCCore
 import interface.fm_parser as my_parser

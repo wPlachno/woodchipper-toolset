@@ -1,10 +1,12 @@
 # wcn.py
 # Written by: Will Plachno
 # Created: 08/22/24
-# Version: 0.0.2.001
-# Last Changed: 01/08/2025
+# Version: 0.0.2.002
+# Last Changed: 05/05/2025
 
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 
 from utilities.wccore import WoodchipperCore as WCCore
 import interface.wcn_parser as my_parser

@@ -1,10 +1,12 @@
 # gignore.py
 # Written by: Will Plachno
 # Created: 08/27/2024
-# Version: 0.0.1.000
-# Last Changed: 01/04/2025
+# Version: 0.0.1.001
+# Last Changed: 05/05/2025
 
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 
 from utilities.wccore import WoodchipperCore as WCCore
 from constants import MODE
