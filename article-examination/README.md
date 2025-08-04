@@ -6,11 +6,11 @@ It was written by Will Plachno from scratch with an MIT License. You can find th
 
 ## Setup
 
-This setup assumes that you have a single-directory Markdown library, as required by MDWiki (and maybe vimwiki?). To run the script, you should have PYthone 3.10.5 or newer. 
+This setup assumes that you have a single-directory Markdown library, as required by MDWiki (and maybe vimwiki?). To run the script, you should have Python 3.10.5 or newer. 
 
 ## Using the Script
 
-The centerpoint of aep is article-examination.py, so you just need to replace `[DIRECTORY_PATH]` with the path to your markdown library.
+The center-point of aep is article-examination.py, so you just need to replace `[DIRECTORY_PATH]` with the path to your markdown library.
 ```
 py article-examination.py [DIRECTORY_PATH]
 ```
