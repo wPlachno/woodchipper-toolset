@@ -1,7 +1,7 @@
 # wcn_colorStack.py
 # Written by: Will Plachno
 # Created: 09/22/2025
-# Version: 0.0.1.001
+# Version: 0.0.1.002
 # Last Changed: 09/22/2025
 
 from constants import CLR_ARRAY

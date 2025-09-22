@@ -1,8 +1,8 @@
 # wcn_printer.py
 # Written By: Will Plachno
 # Created: 01/08/2025
-# Version: 0.0.1.002
-# Last Changed: 01/08/2025
+# Version: 0.0.1.003
+# Last Changed: 09/22/2025
 
 
 from utilities.wcmodeprinter import WoodchipperCoreModePrinter as WCPrinter

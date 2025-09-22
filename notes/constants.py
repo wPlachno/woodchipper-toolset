@@ -1,8 +1,8 @@
 # constants.py
 # Written by: Will Plachno
 # Created: 08/22/24
-# Version: 0.0.2.001
-# Last Changed: 01/08/2025
+# Version: 0.0.2.002
+# Last Changed: 09/22/2025
 
 from utilities.wcconstants import COLOR, clr, OP, COLOUR
 
